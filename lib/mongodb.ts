@@ -1,6 +1,7 @@
 import { MongoClient, Db } from 'mongodb';
 
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/local';
+const db = process.env.MONGODB_DB || 'local';
 
 declare global {
   // eslint-disable-next-line no-var
@@ -19,6 +20,5 @@ clientPromise = global._mongoClientPromise!;
 
 export async function getDb(): Promise<Db> {
   const client = await clientPromise;
-  // 'local' is the DB used in your Python repos
-  return client.db('local');
+  return client.db(db);
 }
