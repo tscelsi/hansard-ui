@@ -2,6 +2,7 @@ import { getDb } from "@/lib/mongodb";
 import { Talker } from "@/types/index";
 import Badge, { HouseBadge } from "components/Badge";
 import SpeakerTitle from "components/SpeakerTitle";
+import { Route } from "next";
 import Link from "next/link";
 
 const toArr = (v: string | string[] | undefined) =>
@@ -105,7 +106,7 @@ export default async function SpeechesPage({
         const snippet = (s.first_content || "").slice(0, 120);
         const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
         return (
-          <Link key={s.speech_id} href={href}>
+          <Link key={s.speech_id} href={href as Route}>
             <div className="hover:cursor-pointer flex flex-col gap-2 p-2 border-b">
               <div className="flex flex-col gap-1">
                 {mainTalker && (

@@ -3,11 +3,12 @@
 import React from "react";
 import MultiSelect from "./MultiSelect";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Route } from "next";
 
-const toArr = (v: string | string[] | undefined) =>
+const toArr = (v: string | string[] | undefined | null) =>
   Array.isArray(v) ? (v.filter(Boolean) as string[]) : v ? [v] : [];
 
-const toStr = (v: string | string[] | undefined) =>
+const toStr = (v: string | string[] | undefined | null) =>
   Array.isArray(v) ? v[0] ?? "" : v ?? "";
 
 const getFiltersForPage = (pathname: string) => {
@@ -39,7 +40,8 @@ export default function SpeechFilters({
     for (const cat of v) {
       params.append(type, cat);
     }
-    replace(`${pathname}?${params.toString()}`);
+    const path = `${pathname}?${params.toString()}`
+    replace(path as Route);
   }
 
   const from = toStr(searchParams.get("from"));

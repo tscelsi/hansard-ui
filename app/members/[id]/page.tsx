@@ -1,6 +1,7 @@
 import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge, { HouseBadge } from "components/Badge";
+import { Route } from "next";
 import Link from "next/link";
 
 const toArr = (v: string | string[] | undefined) =>
@@ -116,7 +117,7 @@ export default async function MemberPage({
         const snippet = (p.content || "").substring(0, 120);
         const href = `/speeches/${encodeURIComponent(p.speech_id)}`;
         return (
-          <Link href={href} key={p.speech_id}>
+          <Link href={href as Route} key={p.speech_id}>
             <div className="flex flex-col gap-2 border-b p-2">
               <div className="flex flex-col gap-1">
                 <span className="">
