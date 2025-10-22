@@ -41,11 +41,11 @@ export default function RootLayout({
         className={`${playfair.className} text-[15px] md:text-[18px] leading-7 text-dark-text bg-dark-bg`}
       >
         <header className="">
-          <div className="container m-auto">
+          <div className="container m-auto sm:border-x">
             <NavBar filtersPromise={filtersPromise} />
           </div>
         </header>
-        <main className="container m-auto">{children}</main>
+        <main className="container m-auto sm:border-x">{children}</main>
       </body>
     </html>
   );

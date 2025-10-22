@@ -1,3 +1,4 @@
+import { formatDateString } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge, { HouseBadge } from "components/Badge";
@@ -121,11 +122,7 @@ export default async function MemberPage({
             <div className="flex flex-col gap-2 border-b p-2">
               <div className="flex flex-col gap-1">
                 <span className="">
-                  {new Date(p.date).toLocaleDateString("en-AU", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                  })}
+                  {formatDateString(p.date)}
                 </span>
                 <div className="hover:underline flex justify-between items-baseline text-3xl">
                   <strong>{p.debate_title || "Speech"}</strong>

@@ -1,3 +1,4 @@
+import { formatDateString } from '@/lib/date';
 import { getDb } from '@/lib/mongodb';
 import type { SpeechPart, Talker } from '@/types/index';
 
@@ -146,7 +147,7 @@ export default async function BillPage({ params, searchParams }: { params: { id:
                   <a href={`/speech/${encodeURIComponent(s.speech_id)}`}>
                     <strong>{mainName || 'Speech'}</strong>
                   </a>
-                  <span className="text-gray-500 dark:text-gray-400">{new Date(s.date).toLocaleDateString()}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{formatDateString(s.date)}</span>
                 </div>
                 {s.subdebate_title && (
                   <div className="mt-1 text-gray-500 dark:text-gray-400">

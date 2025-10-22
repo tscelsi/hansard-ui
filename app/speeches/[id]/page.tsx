@@ -2,6 +2,9 @@ import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge from "components/Badge";
 import clsx from "clsx";
+import { formatDateString } from "@/lib/date";
+import { Location12Regular } from "@fluentui/react-icons";
+import { instrumentSans } from "app/fonts";
 
 export default async function SpeechPage({
   params,
@@ -62,7 +65,7 @@ export default async function SpeechPage({
 
   const p0 = parts[0];
   const title = p0?.debate_title || "Speech";
-  const dateStr = new Date(p0.date).toLocaleDateString();
+  const dateStr = formatDateString(p0.date);
   const subdebateTitle = p0?.subdebate_title || "";
   const subdebateInfo = p0?.subdebate_info || "";
 
@@ -71,26 +74,28 @@ export default async function SpeechPage({
       <div className="card">
         <div className="border-b p-2">
           <h1 className="text-4xl font-bold mb-1">{title}</h1>
-          <h4>
-            <strong>Primary talker: </strong>
-            {p0.talker_name}
-          </h4>
-          <h4>
-            <strong>Date: </strong>
-            {dateStr}
-          </h4>
-          <h4>
-            <strong>Category: </strong>
-            {p0.debate_category}
-          </h4>
-          {(subdebateTitle || subdebateInfo) && (
+          <div>
             <h4>
-              <strong>Subdebate:</strong> {subdebateTitle || "—"}
-              {subdebateInfo && (
-                <span className="muted"> — {subdebateInfo}</span>
-              )}
+              <strong>Primary talker: </strong>
+              {p0.talker_name}
             </h4>
-          )}
+            <h4>
+              <strong>Date: </strong>
+              {dateStr}
+            </h4>
+            <h4>
+              <strong>Category: </strong>
+              {p0.debate_category}
+            </h4>
+            {(subdebateTitle || subdebateInfo) && (
+              <h4>
+                <strong>Subdebate:</strong> {subdebateTitle || "—"}
+                {subdebateInfo && (
+                  <span className="muted"> — {subdebateInfo}</span>
+                )}
+              </h4>
+            )}
+          </div>
         </div>
       </div>
       <div className="">
@@ -117,7 +122,10 @@ export default async function SpeechPage({
                       </div>
                       {p.talker_party && <Badge>{p.talker_party}</Badge>}
                       {p.talker_electorate && (
-                        <Badge>{p.talker_electorate}</Badge>
+                        <Badge>
+                          <Location12Regular />
+                          {p.talker_electorate}
+                        </Badge>
                       )}
                     </div>
                   </div>

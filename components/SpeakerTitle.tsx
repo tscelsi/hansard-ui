@@ -1,3 +1,4 @@
+import { formatDateString } from "@/lib/date";
 import React from "react";
 
 type SpeakerTitleProps = {
@@ -18,7 +19,7 @@ export default function SpeakerTitle({
         {electorate && <span> ({electorate})</span>}
       </p>
       <span className="text-gray-500 dark:text-gray-400">
-        {new Date(date).toLocaleDateString()}
+        {formatDateString(date)}
       </span>
     </div>
   );
