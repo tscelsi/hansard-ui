@@ -66,8 +66,8 @@ export default async function BillPage({ params, searchParams }: { params: { id:
       <div className="container">
         <div className="card">
           <a href="/">← Back</a>
-          <h1 style={{ marginTop: '0.5rem' }}>Bill {billId}</h1>
-          <p className="muted">No speeches found for this bill.</p>
+          <h1 className="mt-2">Bill {billId}</h1>
+          <p className="text-gray-500 dark:text-gray-400">No speeches found for this bill.</p>
         </div>
       </div>
     );
@@ -95,14 +95,14 @@ export default async function BillPage({ params, searchParams }: { params: { id:
 
   return (
     <div className="container">
-      <div className="card" style={{ marginBottom: '1rem' }}>
+      <div className="card mb-4">
         <a href="/">← Back</a>
-        <h1 style={{ marginTop: '0.5rem' }}>{billTitle}</h1>
-        <p className="muted">Speeches related to this bill</p>
-        <form method="GET" className="row" style={{ gap: '0.75rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+        <h1 className="mt-2">{billTitle}</h1>
+  <p className="text-gray-500 dark:text-gray-400">Speeches related to this bill</p>
+        <form method="GET" className="flex-wrap gap-3 mt-2">
           <div>
             <label htmlFor="talker_id">Talker</label>
-            <select id="talker_id" name="talker_id" className="input" defaultValue={talkerId}>
+            <select id="talker_id" name="talker_id" className="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" defaultValue={talkerId}>
               <option value="">All</option>
               {Array.from(new Set(summaries.flatMap((s) => s.talker_ids)))
                 .map((id) => ({ id, name: talkerMap.get(id)?.name || id }))
@@ -114,26 +114,26 @@ export default async function BillPage({ params, searchParams }: { params: { id:
           </div>
           <div>
             <label htmlFor="from">From</label>
-            <input id="from" name="from" type="date" className="input" defaultValue={from} />
+            <input id="from" name="from" type="date" className="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" defaultValue={from} />
           </div>
           <div>
             <label htmlFor="to">To</label>
-            <input id="to" name="to" type="date" className="input" defaultValue={to} />
+            <input id="to" name="to" type="date" className="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" defaultValue={to} />
           </div>
           <div>
             <label htmlFor="pageSize">Page size</label>
-            <select id="pageSize" name="pageSize" className="input" defaultValue={String(pageSize)}>
+            <select id="pageSize" name="pageSize" className="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100" defaultValue={String(pageSize)}>
               {[10,20,50,100].map((n) => <option key={n} value={n}>{n}</option>)}
             </select>
           </div>
-          <div style={{ alignSelf: 'end' }}>
-            <button type="submit" className="input" style={{ cursor: 'pointer' }}>Apply</button>
+          <div className="self-end">
+            <button type="submit" className="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 cursor-pointer">Apply</button>
           </div>
         </form>
       </div>
 
       <div className="card">
-        <ul className="list">
+        <ul>
           {summaries.map((s) => {
             const mainName = s.main_talker_id ? (talkerMap.get(s.main_talker_id)?.name || s.main_talker_id) : undefined;
             const names = s.talker_ids
@@ -142,35 +142,35 @@ export default async function BillPage({ params, searchParams }: { params: { id:
             const extra = s.talker_ids.length - names.length;
             return (
               <li key={s.speech_id}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                <div className="flex justify-between items-baseline">
                   <a href={`/speech/${encodeURIComponent(s.speech_id)}`}>
                     <strong>{mainName || 'Speech'}</strong>
                   </a>
-                  <span className="muted">{new Date(s.date).toLocaleDateString()}</span>
+                  <span className="text-gray-500 dark:text-gray-400">{new Date(s.date).toLocaleDateString()}</span>
                 </div>
                 {s.subdebate_title && (
-                  <div className="muted" style={{ marginTop: '0.25rem' }}>
+                  <div className="mt-1 text-gray-500 dark:text-gray-400">
                     <span className="badge">{s.subdebate_title}</span>
                   </div>
                 )}
-                <div className="muted" style={{ marginTop: '0.25rem' }}>
+                <div className="mt-1 text-gray-500 dark:text-gray-400">
                   {names.join(', ')}{extra > 0 ? `, +${extra} more` : ''}
                 </div>
                 {s.first_snippet && (
-                  <div style={{ marginTop: '0.5rem', whiteSpace: 'pre-wrap' }}>{s.first_snippet}…</div>
+                  <div className="mt-2 whitespace-pre-wrap">{s.first_snippet}…</div>
                 )}
               </li>
             );
           })}
         </ul>
-        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+        <div className="flex gap-2 mt-4">
           {page > 1 && (
             <a className="badge" href={`?${new URLSearchParams({ ...Object.fromEntries(Object.entries({ talker_id: talkerId, from, to, pageSize }).filter(([_,v]) => v)), page: String(page - 1) }).toString()}`}>← Prev</a>
           )}
           {(page * pageSize) < totalSpeeches && (
             <a className="badge" href={`?${new URLSearchParams({ ...Object.fromEntries(Object.entries({ talker_id: talkerId, from, to, pageSize }).filter(([_,v]) => v)), page: String(page + 1) }).toString()}`}>Next →</a>
           )}
-          <span className="muted">Page {page} of {Math.max(1, Math.ceil(totalSpeeches / pageSize))}</span>
+          <span className="text-gray-500 dark:text-gray-400">Page {page} of {Math.max(1, Math.ceil(totalSpeeches / pageSize))}</span>
         </div>
       </div>
     </div>
