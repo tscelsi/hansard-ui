@@ -92,7 +92,15 @@ export default async function BillPage({ params }: { params: { id: string } }) {
             instrumentSans.className
           )}
         >
-          <li>Bills</li>
+          <Link
+            href="/bills"
+            className={clsx(
+              instrumentSans.className,
+              "flex text-xs hover:text-dark-text/80 transition"
+            )}
+          >
+            Bills
+          </Link>
           <li className="flex">
             <ChevronRight12Filled />
           </li>
@@ -123,29 +131,29 @@ export default async function BillPage({ params }: { params: { id: string } }) {
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Speech List</h2>
-          <Accordion
-            items={speechListResult.map((el) => ({
-              value: formatDate(el._id),
-              trigger: formatDate(el._id),
-              content: (
-                <div className="flex flex-col gap-y-4">
-                  {el.speeches.map((speech) => (
-                    <Link
-                      href={`/speeches/${encodeURIComponent(speech.speech_id)}`}
-                      key={speech.speech_id}
-                    >
-                      <BillListItem
-                        speaker={speech.talker_name}
-                        category={speech.debate_category}
-                        party={speech.talker_party}
-                        content={speech.content}
-                      />
-                    </Link>
-                  ))}
-                </div>
-              ),
-            }))}
-          />
+        <Accordion
+          items={speechListResult.map((el) => ({
+            value: formatDate(el._id),
+            trigger: formatDate(el._id),
+            content: (
+              <div className="flex flex-col gap-y-4">
+                {el.speeches.map((speech) => (
+                  <Link
+                    href={`/speeches/${encodeURIComponent(speech.speech_id)}`}
+                    key={speech.speech_id}
+                  >
+                    <BillListItem
+                      speaker={speech.talker_name}
+                      category={speech.debate_category}
+                      party={speech.talker_party}
+                      content={speech.content}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ),
+          }))}
+        />
       </div>
     </div>
   );
