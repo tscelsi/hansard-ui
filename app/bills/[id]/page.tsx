@@ -1,4 +1,4 @@
-import { formatDate, formatDateString } from "@/lib/date";
+import { formatDate } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
 import {
   partySpeechCounts,
@@ -16,25 +16,8 @@ import {
   PartySpeechProportionChart,
   SpeechCountOverTimeByPartChart,
 } from "components/charts/speechCountOverTime";
-import { SpeechListItem } from "components/SpeechListItem";
 import { TopSpeakerTable } from "components/tables/TopSpeakerTable";
 import Link from "next/link";
-
-type SpeechSummary = {
-  speech_id: string;
-  date: string;
-  debate_title: string;
-  talker_ids: string[];
-  first_snippet: string;
-  subdebate_title?: string | null;
-  main_talker_id?: string;
-};
-
-type SearchParams = { [key: string]: string | string[] | undefined };
-
-function toStr(v: string | string[] | undefined) {
-  return Array.isArray(v) ? v[0] ?? "" : v ?? "";
-}
 
 export default async function BillPage({ params }: { params: { id: string } }) {
   const billId = params.id;
@@ -82,6 +65,16 @@ export default async function BillPage({ params }: { params: { id: string } }) {
   }
 
   console.log(partySpeechProportions);
+  const largestProportion = Object.entries(partySpeechProportions).reduce(
+    (acc, [party, proportion]) => {
+      // get the max proportion and party
+      if (proportion > acc.proportion) {
+        acc = { party, proportion };
+      }
+      return acc;
+    },
+    { party: "", proportion: 0 }
+  );
 
   return (
     <div className="container">
@@ -115,6 +108,12 @@ export default async function BillPage({ params }: { params: { id: string } }) {
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Party Speech Proportion</h2>
         <PartySpeechProportionChart data={partySpeechProportions} />
+        <p
+          className={clsx("text-sm text-light-grey", instrumentSans.className)}
+        >
+          {largestProportion.party} has largest proportion of speeches with{" "}
+          {largestProportion.proportion}%.
+        </p>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Speeches Over Time</h2>
@@ -122,7 +121,8 @@ export default async function BillPage({ params }: { params: { id: string } }) {
         <p
           className={clsx("text-sm text-light-grey", instrumentSans.className)}
         >
-          Speech counts over the last 18 sitting sessions.
+          Speech counts over the last 18 sitting sessions, and any time this
+          year that speeches were given.
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
@@ -145,6 +145,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
                     <BillListItem
                       speaker={speech.talker_name}
                       category={speech.debate_category}
+                      electorate={speech.talker_electorate}
                       party={speech.talker_party}
                       content={speech.content}
                     />

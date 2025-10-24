@@ -3,11 +3,13 @@ import Badge, { HouseBadge } from "./Badge";
 export const BillListItem = ({
   speaker,
   category,
+  electorate,
   party,
   content,
 }: {
   speaker?: string;
   category: string;
+  electorate: string;
   party: string;
   content: string;
 }) => {
@@ -16,7 +18,7 @@ export const BillListItem = ({
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
         <h2 className="hover:underline flex justify-between items-baseline font-medium text-lg">
-          {speaker}
+          {speaker}{" "}({electorate || "Unknown Electorate"})
         </h2>
         <div className="flex flex-wrap gap-1">
           <Badge>{category}</Badge>

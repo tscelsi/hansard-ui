@@ -3,7 +3,11 @@ import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge from "components/Badge";
 import clsx from "clsx";
 import { formatDateString } from "@/lib/date";
-import { ChevronRight12Filled, Location12Regular } from "@fluentui/react-icons";
+import {
+  ArrowUpRight12Filled,
+  ChevronRight12Filled,
+  Location12Regular,
+} from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import Link from "next/link";
 
@@ -66,9 +70,8 @@ export default async function SpeechPage({
 
   const p0 = parts[0];
   const title = p0?.debate_title || "Speech";
-  const dateStr = formatDateString(p0.date);
   const subdebateTitle = p0?.subdebate_title || "";
-  const subdebateInfo = p0?.subdebate_info || "";
+  const isBill = !!p0.bill_id;
 
   let h2Text = p0.debate_category;
   if (subdebateTitle) {
@@ -100,8 +103,20 @@ export default async function SpeechPage({
           </ol>
         </div>
         <div className="border-b p-2 flex flex-col gap-2">
-          <p className="font-medium">{p0.talker_name}</p>
-          <h1 className="text-4xl font-semibold mb-1">{title}</h1>
+          <div className="flex justify-between items-center">
+            <p className="font-medium">{p0.talker_name}</p>
+            {p0.bill_id && (
+              <Link
+                href={`/bills/${encodeURIComponent(p0.bill_id)}`}
+                className="flex gap-1 text-link-blue hover:underline hover:cursor-pointer"
+              >
+                <span className="text-xs">Go to bill</span>
+                <ArrowUpRight12Filled />
+              </Link>
+            )}
+          </div>
+          <h1 className="text-4xl font-semibold">{title}</h1>
+
           <div>
             <h2 className="font-bold">{h2Text}</h2>
             {p0.subdebate_info && <p>{p0.subdebate_info}</p>}

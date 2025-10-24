@@ -15,6 +15,7 @@ export default {
         "dark-bg": "#120E17",
         "dark-grey": "#39373A",
         "light-grey": "#7D797F",
+        "link-blue": "#527AFF",
         ALP: "#6C242A",
         LP: "#1E1B56",
       },

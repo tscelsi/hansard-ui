@@ -7,10 +7,8 @@ import {
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
 import {
-  ResponsiveContainer,
   Bar,
   BarChart,
-  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
@@ -73,6 +71,7 @@ export const SpeechCountOverTimeByPartChart = ({
         />
         <YAxis type="number" hide />
         <Tooltip
+          cursor={false}
           content={({ active, payload, label }) => {
             if (!active || !payload || !payload.length) return null;
             return (
@@ -98,7 +97,7 @@ export const SpeechCountOverTimeByPartChart = ({
             );
           }}
         />
-        <Bar dataKey="count" fill="#82ca9d" />
+        <Bar dataKey="count" fill="#82ca9d"/>
       </BarChart>
     </div>
   );

@@ -94,7 +94,7 @@ export default function NavBar({
         </div>
       </div>
       {filterOpen && (
-        <div className="absolute z-1 bg-light-bg text-light-text w-full h-full">
+        <div className="absolute bg-light-bg text-light-text w-full h-full">
           <SpeechFilters
             categoryOptions={filters.categories}
             partyOptions={filters.parties}
@@ -103,7 +103,7 @@ export default function NavBar({
         </div>
       )}
       {menuOpen && (
-        <ol className="absolute z-1 bg-light-bg text-light-text w-full h-full">
+        <ol className="z-10 absolute bg-light-bg text-light-text w-full h-full">
           <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href={"/members"}>Members</Link>
           </li>
