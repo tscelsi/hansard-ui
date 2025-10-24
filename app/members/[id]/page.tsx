@@ -1,7 +1,6 @@
-import { formatDateString } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
-import Badge, { HouseBadge } from "components/Badge";
+import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
 
@@ -105,8 +104,8 @@ export default async function MemberPage({
 
   return (
     <div className="container">
-      <div className="card p-2 border-b bg-light-bg text-light-text">
-        <h1 className="text-4xl font-bold">{p0.talker_name}</h1>
+      <div className="card py-3 px-2 border-b">
+        <h1 className="text-4xl font-semibold">{p0.talker_name}</h1>
         <h2>
           <span className="font-medium">Party:</span>{" "}
           {p0.talker_party || "Unknown"} |{" "}
@@ -119,26 +118,13 @@ export default async function MemberPage({
         const href = `/speeches/${encodeURIComponent(p.speech_id)}`;
         return (
           <Link href={href as Route} key={p.speech_id}>
-            <div className="flex flex-col gap-2 border-b p-2">
-              <div className="flex flex-col gap-1">
-                <span className="">
-                  {formatDateString(p.date)}
-                </span>
-                <div className="hover:underline flex justify-between items-baseline text-3xl">
-                  <strong>{p.debate_title || "Speech"}</strong>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-1">
-                <Badge>{p.debate_category}</Badge>
-                <Badge>{p.talker_party}</Badge>
-                <HouseBadge chamber="house" />
-              </div>
-              <div className="whitespace-pre-wrap">
-                <p>{`${snippet}${
-                  (p.content?.length || 0) > 240 ? "…" : ""
-                }`}</p>
-              </div>
-            </div>
+            <SpeechListItem
+              title={p.debate_title || "Speech"}
+              category={p.debate_category}
+              party={p.talker_party}
+              content={p.content || ""}
+              date={p.date}
+            />
           </Link>
         );
       })}

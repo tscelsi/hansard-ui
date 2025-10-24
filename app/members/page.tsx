@@ -69,10 +69,10 @@ export default async function MembersListPage({
                 <div className="hover:underline flex justify-between items-baseline text-3xl">
                   <strong>{m.name || "Unknown Member"}</strong>
                 </div>
-                <div>
-                  <span className="font-medium">Party:</span>{" "}
+                <div className="font-medium">
+                  <span>Party:</span>{" "}
                   {m.party || "Unknown"} |{" "}
-                  <span className="font-medium">Electorate:</span>{" "}
+                  <span>Electorate:</span>{" "}
                   {m.electorate || "Unknown"}
                 </div>
               </div>

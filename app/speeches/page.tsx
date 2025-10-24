@@ -1,14 +1,15 @@
 import { getDb } from "@/lib/mongodb";
 import { Talker } from "@/types/index";
-import Badge, { HouseBadge } from "components/Badge";
-import SpeakerTitle from "components/SpeakerTitle";
+import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
 
 const toArr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? (v.filter(Boolean) as string[]) : v ? [v] : [];
+
 const toStr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? v[0] ?? "" : v ?? "";
+
 export default async function SpeechesPage({
   searchParams,
 }: {
@@ -103,36 +104,17 @@ export default async function SpeechesPage({
         const mainTalker = s.main_talker_id
           ? talkerMap.get(s.main_talker_id)
           : undefined;
-        const snippet = (s.first_content || "").slice(0, 120);
         const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
         return (
           <Link key={s.speech_id} href={href as Route}>
-            <div className="hover:cursor-pointer flex flex-col gap-2 p-2 border-b">
-              <div className="flex flex-col gap-1">
-                {mainTalker && (
-                  <SpeakerTitle
-                    name={mainTalker.name}
-                    electorate={mainTalker.electorate}
-                    date={s.date}
-                  />
-                )}
-                <div className="hover:underline flex justify-between items-baseline text-3xl">
-                  <strong>{s.debate_title || "Speech"}</strong>
-                </div>
-                <div className="flex flex-wrap gap-1">
-                  <Badge>{s.debate_category}</Badge>
-                  {(mainTalker?.party || s.bill_id) && (
-                    <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                      {mainTalker?.party && <Badge>{mainTalker.party}</Badge>}
-                    </div>
-                  )}
-                  <HouseBadge chamber="house" />
-                </div>
-              </div>
-              <div className="whitespace-pre-wrap">
-                {`${snippet}${(s.first_content?.length || 0) > 240 ? "…" : ""}`}
-              </div>
-            </div>
+            <SpeechListItem
+              speaker={mainTalker?.name || undefined}
+              title={s.debate_title || "Speech"}
+              category={s.debate_category}
+              party={mainTalker?.party || "Unknown"}
+              content={s.first_content || ""}
+              date={s.date}
+            />
           </Link>
         );
       })}

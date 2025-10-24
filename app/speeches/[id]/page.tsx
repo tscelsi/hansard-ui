@@ -3,8 +3,9 @@ import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge from "components/Badge";
 import clsx from "clsx";
 import { formatDateString } from "@/lib/date";
-import { Location12Regular } from "@fluentui/react-icons";
+import { ChevronRight12Filled, Location12Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
+import Link from "next/link";
 
 export default async function SpeechPage({
   params,
@@ -69,36 +70,48 @@ export default async function SpeechPage({
   const subdebateTitle = p0?.subdebate_title || "";
   const subdebateInfo = p0?.subdebate_info || "";
 
+  let h2Text = p0.debate_category;
+  if (subdebateTitle) {
+    h2Text = `${p0.debate_category} / ${subdebateTitle}`;
+  }
+
   return (
     <div className="container">
-      <div className="card">
-        <div className="border-b p-2">
-          <h1 className="text-4xl font-bold mb-1">{title}</h1>
-          <div>
-            <h4>
-              <strong>Primary talker: </strong>
-              {p0.talker_name}
-            </h4>
-            <h4>
-              <strong>Date: </strong>
-              {dateStr}
-            </h4>
-            <h4>
-              <strong>Category: </strong>
-              {p0.debate_category}
-            </h4>
-            {(subdebateTitle || subdebateInfo) && (
-              <h4>
-                <strong>Subdebate:</strong> {subdebateTitle || "—"}
-                {subdebateInfo && (
-                  <span className="muted"> — {subdebateInfo}</span>
+      <div>
+        <div>
+          <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+            <li>
+              <Link
+                href="/speeches"
+                className={clsx(
+                  instrumentSans.className,
+                  "flex text-xs hover:text-dark-text/80 transition"
                 )}
-              </h4>
-            )}
+              >
+                Speeches
+              </Link>
+            </li>
+            <li className="flex">
+              <ChevronRight12Filled />
+            </li>
+            <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
+              <span className={clsx(instrumentSans.className)}>{title}</span>
+            </li>
+          </ol>
+        </div>
+        <div className="border-b p-2 flex flex-col gap-2">
+          <p className="font-medium">{p0.talker_name}</p>
+          <h1 className="text-4xl font-semibold mb-1">{title}</h1>
+          <div>
+            <h2 className="font-bold">{h2Text}</h2>
+            {p0.subdebate_info && <p>{p0.subdebate_info}</p>}
           </div>
+          <span className={clsx("text-sm mt-2", instrumentSans.className)}>
+            {formatDateString(p0.date)}
+          </span>
         </div>
       </div>
-      <div className="">
+      <div>
         <ol>
           {parts.map((p) => {
             const who = p.talker_name || p.talker_id;
@@ -110,7 +123,7 @@ export default async function SpeechPage({
                 >
                   <div className="flex justify-between items-baseline">
                     <div className="flex flex-wrap items-center w-full gap-1">
-                      <div className="flex gap-1 w-fit mr-1">
+                      <div className="flex items-center gap-1 w-fit mr-1">
                         <a
                           href={`#${p.seq}`}
                           className="muted"
@@ -118,7 +131,9 @@ export default async function SpeechPage({
                         >
                           ¶
                         </a>
-                        <strong className="text-lg font-bold">{who}</strong>
+                        <strong className="tracking-wide font-semibold">
+                          {who}
+                        </strong>
                       </div>
                       {p.talker_party && <Badge>{p.talker_party}</Badge>}
                       {p.talker_electorate && (
@@ -129,8 +144,8 @@ export default async function SpeechPage({
                       )}
                     </div>
                   </div>
-                  <div className={clsx("whitespace-pre-wrap text-lg")}>
-                    {p.content}
+                  <div className={clsx("tracking-wide whitespace-pre-wrap")}>
+                    <p>{p.content}</p>
                   </div>
                 </section>
               </li>

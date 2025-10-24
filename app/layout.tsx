@@ -1,7 +1,7 @@
 import NavBar from "components/NavBar";
 import "./globals.css";
 import type { Metadata } from "next";
-import { playfair } from "./fonts";
+import { lora } from "./fonts";
 import { getDb } from "@/lib/mongodb";
 
 export const metadata: Metadata = {
@@ -36,9 +36,9 @@ export default function RootLayout({
   const filtersPromise = fetchFilters();
 
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark text-[14px]">
       <body
-        className={`${playfair.className} text-[15px] md:text-[18px] leading-7 text-dark-text bg-dark-bg`}
+        className={`${lora.className} md:text-[18px] leading-7 text-dark-text bg-dark-bg`}
       >
         <header className="">
           <div className="container m-auto sm:border-x">
