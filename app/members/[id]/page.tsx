@@ -1,5 +1,8 @@
 import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
+import { ChevronRight12Filled } from "@fluentui/react-icons";
+import { instrumentSans } from "app/fonts";
+import clsx from "clsx";
 import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
@@ -104,6 +107,29 @@ export default async function MemberPage({
 
   return (
     <div className="container">
+      <div>
+        <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+          <li>
+            <Link
+              href="/speeches"
+              className={clsx(
+                instrumentSans.className,
+                "flex text-xs hover:text-dark-text/80 transition"
+              )}
+            >
+              Members
+            </Link>
+          </li>
+          <li className="flex">
+            <ChevronRight12Filled />
+          </li>
+          <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
+            <span className={clsx(instrumentSans.className)}>
+              {p0.talker_name}
+            </span>
+          </li>
+        </ol>
+      </div>
       <div className="card py-3 px-2 border-b">
         <h1 className="text-4xl font-semibold">{p0.talker_name}</h1>
         <h2>

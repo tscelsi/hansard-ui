@@ -1,5 +1,7 @@
 import { getDb } from "@/lib/mongodb";
 import { Talker } from "@/types/index";
+import { instrumentSans } from "app/fonts";
+import clsx from "clsx";
 import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
@@ -100,6 +102,13 @@ export default async function SpeechesPage({
   }
   return (
     <div>
+      <div>
+        <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+          <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis">
+            <span className={clsx(instrumentSans.className)}>Speeches</span>
+          </li>
+        </ol>
+      </div>
       {summaries.map((s) => {
         const mainTalker = s.main_talker_id
           ? talkerMap.get(s.main_talker_id)
