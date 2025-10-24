@@ -140,17 +140,18 @@ export default async function MemberPage({
         </h2>
       </div>
       {parts.map((p) => {
-        const snippet = (p.content || "").substring(0, 120);
         const href = `/speeches/${encodeURIComponent(p.speech_id)}`;
         return (
           <Link href={href as Route} key={p.speech_id}>
-            <SpeechListItem
-              title={p.debate_title || "Speech"}
-              category={p.debate_category}
-              party={p.talker_party}
-              content={p.content || ""}
-              date={p.date}
-            />
+            <div className="flex flex-col border-b p-2">
+              <SpeechListItem
+                title={p.debate_title || "Speech"}
+                category={p.debate_category}
+                party={p.talker_party}
+                content={p.content || ""}
+                date={p.date}
+              />
+            </div>
           </Link>
         );
       })}

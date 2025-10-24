@@ -109,6 +109,7 @@ export default async function SpeechesPage({
           </li>
         </ol>
       </div>
+
       {summaries.map((s) => {
         const mainTalker = s.main_talker_id
           ? talkerMap.get(s.main_talker_id)
@@ -116,14 +117,16 @@ export default async function SpeechesPage({
         const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
         return (
           <Link key={s.speech_id} href={href as Route}>
-            <SpeechListItem
-              speaker={mainTalker?.name || undefined}
-              title={s.debate_title || "Speech"}
-              category={s.debate_category}
-              party={mainTalker?.party || "Unknown"}
-              content={s.first_content || ""}
-              date={s.date}
-            />
+            <div className="flex flex-col border-b p-2">
+              <SpeechListItem
+                speaker={mainTalker?.name || undefined}
+                title={s.debate_title || "Speech"}
+                category={s.debate_category}
+                party={mainTalker?.party || "Unknown"}
+                content={s.first_content || ""}
+                date={s.date}
+              />
+            </div>
           </Link>
         );
       })}
