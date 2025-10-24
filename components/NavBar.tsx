@@ -3,7 +3,6 @@ import Link from "next/link";
 import React from "react";
 import {
   Dismiss24Filled,
-  Filter24Filled,
   List24Filled,
   Search24Filled,
 } from "@fluentui/react-icons";
@@ -90,7 +89,7 @@ export default function NavBar({
           </MenuItem>
         )}
         <div className="flex flex-1 justify-end text-3xl p-2">
-          <p className="font-medium">Hansard.</p>
+          <Link href="/" className="font-medium hover:opacity-90 transition">Hansard.</Link>
         </div>
       </div>
       {filterOpen && (
@@ -109,6 +108,9 @@ export default function NavBar({
           </li>
           <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href="/speeches">Speeches</Link>
+          </li>
+          <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
+            <Link href="/bills">Bills</Link>
           </li>
         </ol>
       )}

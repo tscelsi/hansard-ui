@@ -18,7 +18,7 @@ async function getBills(): Promise<Bill[]> {
       {
         $match: {
           seq: 0,
-          $or: [{ bill_id: { $ne: null } }, { bill_id: { $ne: "" } }],
+          $and: [{ bill_id: { $ne: null } }, { bill_id: { $ne: "" } }],
         },
       },
       {
