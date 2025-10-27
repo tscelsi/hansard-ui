@@ -10,12 +10,12 @@ export type PartySpeechProportionsResult = Record<string, number>;
 
 export const partySpeechCounts = (db: Db, bill_id: string) =>
   db
-    .collection("speeches")
+    .collection("parts")
     .aggregate<PartySpeechCountsResult>([
       {
         $match: {
-          bill_id: bill_id,
-          seq: 0,
+          bill_ids: bill_id,
+          speech_seq: 0,
         },
       },
       {
@@ -54,12 +54,12 @@ export type TopSpeakersResult = {
 
 export const topSpeakers = (db: Db, bill_id: string) =>
   db
-    .collection("speeches")
+    .collection("parts")
     .aggregate<TopSpeakersResult>([
       {
         $match: {
-          bill_id: bill_id,
-          seq: 0,
+          bill_ids: bill_id,
+          speech_seq: 0,
         },
       },
       {
@@ -98,12 +98,21 @@ export const topSpeakers = (db: Db, bill_id: string) =>
 
 export const speechList = (db: Db, bill_id: string) =>
   db
-    .collection("speeches")
-    .aggregate<{ _id: Date; speeches: SpeechPartWithTalkerInfo[] }>([
+    .collection("parts")
+    .aggregate<{ _id: Date; parts: SpeechPartWithTalkerInfo[] }>([
       {
         $match: {
-          bill_id: bill_id,
-          seq: 0,
+          bill_ids: bill_id,
+          $or: [{ speech_seq: 0 }, { type: "first_reading" }],
+        },
+      },
+      {
+        $sort: {
+          date: 1,
+          debate_seq: 1,
+          subdebate_1_seq: 1,
+          subdebate_2_seq: 1,
+          speech_seq: 1,
         },
       },
       {
@@ -114,12 +123,32 @@ export const speechList = (db: Db, bill_id: string) =>
           as: "talker_info",
         },
       },
-      { $unwind: "$talker_info" },
       {
         $addFields: {
-          talker_name: "$talker_info.name",
-          talker_party: "$talker_info.party",
-          talker_electorate: "$talker_info.electorate",
+          talker_name: {
+            $ifNull: [
+              {
+                $arrayElemAt: ["$talker_info.name", 0],
+              },
+              null,
+            ],
+          },
+          talker_party: {
+            $ifNull: [
+              {
+                $arrayElemAt: ["$talker_info.party", 0],
+              },
+              null,
+            ],
+          },
+          talker_electorate: {
+            $ifNull: [
+              {
+                $arrayElemAt: ["$talker_info.electorate", 0],
+              },
+              null,
+            ],
+          },
         },
       },
       {
@@ -130,7 +159,7 @@ export const speechList = (db: Db, bill_id: string) =>
       {
         $group: {
           _id: "$date",
-          speeches: {
+          parts: {
             $push: "$$ROOT",
           },
         },
@@ -171,9 +200,9 @@ const latestSittingDays = [
 
 export const speechesOverTime = async (db: Db, bill_id: string) => {
   const result = await db
-    .collection("speeches")
+    .collection("parts")
     .aggregate<SpeechesOverTimeResult>([
-      { $match: { bill_id: bill_id, seq: 0 } },
+      { $match: { bill_ids: bill_id, speech_seq: 0 } },
       {
         $group: {
           _id: {

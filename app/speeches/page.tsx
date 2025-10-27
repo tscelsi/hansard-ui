@@ -6,6 +6,18 @@ import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
 
+type SpeechListItem = {
+  speech_id: string;
+  date: string;
+  debate_category: string;
+  subdebate_1_title: string;
+  bill_ids: string[] | null;
+  speech_part_type: "interjection" | "continuation" | "speech";
+  first_content: string;
+  main_talker_id: string;
+  talker_ids: string[];
+};
+
 const toArr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? (v.filter(Boolean) as string[]) : v ? [v] : [];
 
@@ -40,6 +52,11 @@ export default async function SpeechesPage({
   const db = await getDb();
   const pipeline: any[] = [
     {
+      $match: {
+        type: "speech",
+      },
+    },
+    {
       $lookup: {
         from: "talkers",
         localField: "talker_id",
@@ -49,7 +66,12 @@ export default async function SpeechesPage({
     },
     { $unwind: "$talker_info" },
     { $match: match },
-    { $sort: { date: -1, speech_id: 1, seq: 1 } },
+    {
+      $sort: {
+        date: -1,
+        speech_seq: 1,
+      },
+    },
     {
       $group: {
         _id: "$speech_id",
@@ -62,12 +84,11 @@ export default async function SpeechesPage({
         _id: 0,
         speech_id: "$_id",
         date: "$first.date",
-        debate_title: "$first.debate_title",
         debate_category: "$first.debate_category",
-        bill_id: "$first.bill_id",
-        type: "$first.type",
-        first_seq: "$first.seq",
-        first_content: "$first.content",
+        subdebate_1_title: "$first.subdebate_1_title",
+        bill_ids: "$first.bill_ids",
+        speech_part_type: "$first.speech_part_type",
+        first_content: "$first.speech_content",
         main_talker_id: "$first.talker_id",
         talker_ids: 1,
       },
@@ -76,9 +97,9 @@ export default async function SpeechesPage({
     { $limit: 200 },
   ];
   const summaries = (await db
-    .collection("speeches")
-    .aggregate(pipeline)
-    .toArray()) as any[];
+    .collection("parts")
+    .aggregate<SpeechListItem>(pipeline)
+    .toArray());
 
   const talkerIds = Array.from(
     new Set(
@@ -120,7 +141,7 @@ export default async function SpeechesPage({
             <div className="flex flex-col border-b p-2">
               <SpeechListItem
                 speaker={mainTalker?.name || undefined}
-                title={s.debate_title || "Speech"}
+                title={s.subdebate_1_title || "Speech"}
                 category={s.debate_category}
                 party={mainTalker?.party || "Unknown"}
                 content={s.first_content || ""}

@@ -21,3 +21,10 @@ MONGODB_URI=mongodb://localhost:27017/local
 - `npm run dev` – start dev server on http://localhost:3000
 - `npm run build` – build
 - `npm run start` – start production server
+
+
+# TODO
+
+- on speech pages add links to next/previous speech
+- find way to add bill status 
+  - is the bill active? is it an act?

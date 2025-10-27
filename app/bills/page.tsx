@@ -13,18 +13,30 @@ async function getBills(): Promise<Bill[]> {
   const db = await getDb();
   // Try to get all unique bills with id and title
   const bills = await db
-    .collection("speeches")
+    .collection("parts")
     .aggregate<Bill>([
+      { $addFields: { bill_ids_size: { $size: "$bill_ids" } } },
       {
         $match: {
-          seq: 0,
-          $and: [{ bill_id: { $ne: null } }, { bill_id: { $ne: "" } }],
+          bill_ids_size: { $eq: 1 },
+          $or: [{ speech_seq: { $eq: 0 } }, { type: "first_reading" }],
+          bill_ids: { $ne: null },
+        },
+      },
+      { $unwind: "$bill_ids" },
+      { $match: { bill_ids: { $ne: "" } } },
+      {
+        $sort: {
+          debate_seq: 1,
+          subdebate_1_seq: 1,
+          subdebate_2_seq: 1,
+          speech_seq: 1,
         },
       },
       {
         $group: {
-          _id: "$bill_id",
-          title: { $first: "$debate_title" },
+          _id: "$bill_ids",
+          title: { $first: "$subdebate_1_title" },
           date: { $first: "$date" },
         },
       },

@@ -49,9 +49,9 @@ export default async function MembersListPage({
     { $sort: { name: 1 } },
   ];
   const members = (await db
-    .collection("speeches")
-    .aggregate(pipeline)
-    .toArray()) as Talker[];
+    .collection("parts")
+    .aggregate<Talker>(pipeline)
+    .toArray());
 
   if (members.length === 0) {
     return (

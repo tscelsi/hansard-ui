@@ -13,7 +13,7 @@ async function fetchFilters() {
   const db = await getDb();
   // Options for filters
   const [categories, parties, electorates] = await Promise.all([
-    db.collection("speeches").distinct("debate_category", {
+    db.collection("parts").distinct("debate_category", {
       debate_category: { $ne: null },
     }) as Promise<string[]>,
     db

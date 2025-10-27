@@ -20,6 +20,11 @@ export default async function SpeechPage({
   const db = await getDb();
   const pipeline = [
     {
+      $match: {
+        speech_id: id,
+      },
+    },
+    {
       $lookup: {
         from: "talkers",
         localField: "talker_id",
@@ -31,13 +36,8 @@ export default async function SpeechPage({
       $unwind: "$talker_info",
     },
     {
-      $match: {
-        speech_id: id,
-      },
-    },
-    {
       $sort: {
-        seq: 1,
+        speech_seq: 1,
       },
     },
     {
@@ -54,9 +54,9 @@ export default async function SpeechPage({
     },
   ];
   const parts = (await db
-    .collection("speeches")
-    .aggregate(pipeline)
-    .toArray()) as SpeechPartWithTalkerInfo[];
+    .collection("parts")
+    .aggregate<SpeechPartWithTalkerInfo>(pipeline)
+    .toArray());
 
   if (!parts.length) {
     return (
@@ -69,13 +69,12 @@ export default async function SpeechPage({
   }
 
   const p0 = parts[0];
-  const title = p0?.debate_title || "Speech";
-  const subdebateTitle = p0?.subdebate_title || "";
-  const isBill = !!p0.bill_id;
+  const title = p0?.subdebate_1_title || "Speech";
+  const subdebateTitle = p0?.subdebate_2_title || "";
 
-  let h2Text = p0.debate_category;
+  let subtitleHeader = p0.debate_category;
   if (subdebateTitle) {
-    h2Text = `${p0.debate_category} / ${subdebateTitle}`;
+    subtitleHeader = `${p0.debate_category} / ${subdebateTitle}`;
   }
 
   return (
@@ -105,7 +104,7 @@ export default async function SpeechPage({
         <div className="border-b p-2 flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <p className="font-medium">{p0.talker_name}</p>
-            {p0.bill_id && (
+            {/* {p0.bill_ids && p0.bill_ids.length > 0 && (
               <Link
                 href={`/bills/${encodeURIComponent(p0.bill_id)}`}
                 className="flex gap-1 text-link-blue hover:underline hover:cursor-pointer"
@@ -113,13 +112,12 @@ export default async function SpeechPage({
                 <span className="text-xs">Go to bill</span>
                 <ArrowUpRight12Filled />
               </Link>
-            )}
+            )} */}
           </div>
           <h1 className="text-4xl font-semibold">{title}</h1>
-
           <div>
-            <h2 className="font-bold">{h2Text}</h2>
-            {p0.subdebate_info && <p>{p0.subdebate_info}</p>}
+            <h2 className="font-bold">{subtitleHeader}</h2>
+            {p0.subdebate_2_info && <p>{p0.subdebate_2_info}</p>}
           </div>
           <span className={clsx("text-sm mt-2", instrumentSans.className)}>
             {formatDateString(p0.date)}
@@ -131,16 +129,16 @@ export default async function SpeechPage({
           {parts.map((p) => {
             const who = p.talker_name || p.talker_id;
             return (
-              <li key={p.seq}>
+              <li key={p.speech_seq}>
                 <section
-                  id={`${p.seq}`}
+                  id={`${p.speech_seq}`}
                   className="flex flex-col gap-2 border-b p-2"
                 >
                   <div className="flex justify-between items-baseline">
                     <div className="flex flex-wrap items-center w-full gap-1">
                       <div className="flex items-center gap-1 w-fit mr-1">
                         <a
-                          href={`#${p.seq}`}
+                          href={`#${p.speech_seq}`}
                           className="muted"
                           title="Link to this part"
                         >
@@ -160,7 +158,7 @@ export default async function SpeechPage({
                     </div>
                   </div>
                   <div className={clsx("tracking-wide whitespace-pre-wrap")}>
-                    <p>{p.content}</p>
+                    <p>{p.speech_content}</p>
                   </div>
                 </section>
               </li>

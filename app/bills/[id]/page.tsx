@@ -11,6 +11,7 @@ import { ChevronRight12Filled } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
 import Accordion from "components/Accordion";
+import Badge, { HouseBadge } from "components/Badge";
 import { BillListItem } from "components/BillListItem";
 import {
   PartySpeechProportionChart,
@@ -48,7 +49,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
     );
   }
 
-  const b0 = speechListResult[0].speeches[0];
+  const b0 = speechListResult[speechListResult.length - 1].parts[0];
 
   let partySpeechProportions: PartySpeechProportionsResult = {};
   if (partySpeechCountsResult) {
@@ -98,12 +99,12 @@ export default async function BillPage({ params }: { params: { id: string } }) {
             <ChevronRight12Filled />
           </li>
           <li className="text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
-            {b0.debate_title}
+            {b0.subdebate_1_title}
           </li>
         </ol>
       </div>
       <div className="border-b px-2 py-3 flex flex-col gap-2">
-        <h1 className="text-4xl font-semibold mb-1">{b0.debate_title}</h1>
+        <h1 className="text-4xl font-semibold mb-1">{b0.subdebate_1_title}</h1>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Party Speech Proportion</h2>
@@ -137,20 +138,37 @@ export default async function BillPage({ params }: { params: { id: string } }) {
             trigger: formatDate(el._id),
             content: (
               <div className="flex flex-col gap-y-4">
-                {el.speeches.map((speech) => (
-                  <Link
-                    href={`/speeches/${encodeURIComponent(speech.speech_id)}`}
-                    key={speech.speech_id}
-                  >
-                    <BillListItem
-                      speaker={speech.talker_name}
-                      category={speech.debate_category}
-                      electorate={speech.talker_electorate}
-                      party={speech.talker_party}
-                      content={speech.content}
-                    />
-                  </Link>
-                ))}
+                {el.parts.map((part) => {
+                  if (part.type === "speech") {
+                    return (
+                      <Link
+                        href={`/speeches/${encodeURIComponent(part.speech_id)}`}
+                        key={part.speech_id}
+                      >
+                        <BillListItem
+                          speaker={part.talker_name}
+                          category={part.debate_category}
+                          electorate={part.talker_electorate}
+                          party={part.talker_party}
+                          content={part.speech_content}
+                          chamber={part.chamber}
+                        />
+                      </Link>
+                    );
+                  } else if (part.type === "first_reading") {
+                    return (
+                      <div className="bg-link-blue/40 p-2 rounded-md">
+                        <h2 className="flex justify-between items-baseline font-medium text-lg">
+                          {part.subdebate_1_title}
+                        </h2>
+                        <div className="flex flex-wrap gap-1">
+                          <Badge>First Reading</Badge>
+                          <HouseBadge house="hor" />
+                        </div>
+                      </div>
+                    );
+                  }
+                })}
               </div>
             ),
           }))}

@@ -6,12 +6,14 @@ export const BillListItem = ({
   electorate,
   party,
   content,
+  chamber,
 }: {
   speaker?: string;
   category: string;
   electorate: string;
   party: string;
   content: string;
+  chamber: string;
 }) => {
   const snippet = content.substring(0, 120);
   return (
@@ -23,7 +25,8 @@ export const BillListItem = ({
         <div className="flex flex-wrap gap-1">
           <Badge>{category}</Badge>
           <Badge>{party}</Badge>
-          <HouseBadge chamber="house" />
+          <Badge>{chamber}</Badge>
+          <HouseBadge house="hor" />
         </div>
       </div>
       <div className="whitespace-pre-wrap text-sm">

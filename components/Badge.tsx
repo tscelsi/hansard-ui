@@ -50,17 +50,17 @@ export default function Badge({
 }
 
 export const HouseBadge = ({
-  chamber,
+  house,
 }: {
-  chamber: "house" | "senate";
+  house: "hor" | "senate";
 }) => {
   return (
     <Badge
       className={clsx(
-        chamber === "house" ? "bg-green-900/70 text-white" : "bg-red-900/70 text-white"
+        house === "hor" ? "bg-green-900/70 text-white" : "bg-red-900/70 text-white"
       )}
     >
-      {chamber === "house" ? "House" : "Senate"}
+      {house === "hor" ? "House" : "Senate"}
     </Badge>
   );
 };

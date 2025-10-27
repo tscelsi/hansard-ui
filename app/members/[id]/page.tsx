@@ -64,9 +64,8 @@ export default async function MemberPage({
     },
     {
       $sort: {
-        speech_id: 1,
-        seq: 1,
         date: -1,
+        speech_seq: 1,
       },
     },
     {
@@ -89,9 +88,9 @@ export default async function MemberPage({
     },
   ];
   const parts = (await db
-    .collection("speeches")
-    .aggregate(pipeline)
-    .toArray()) as SpeechPartWithTalkerInfo[];
+    .collection("parts")
+    .aggregate<SpeechPartWithTalkerInfo>(pipeline)
+    .toArray());
 
   if (!parts.length) {
     return (
@@ -145,10 +144,10 @@ export default async function MemberPage({
           <Link href={href as Route} key={p.speech_id}>
             <div className="flex flex-col border-b p-2">
               <SpeechListItem
-                title={p.debate_title || "Speech"}
+                title={p.subdebate_1_title || "Speech"}
                 category={p.debate_category}
                 party={p.talker_party}
-                content={p.content || ""}
+                content={p.speech_content || ""}
                 date={p.date}
               />
             </div>
