@@ -29,7 +29,7 @@ export const SpeechListItem = ({
         <div className="flex flex-wrap gap-1">
           <Badge>{category}</Badge>
           <Badge>{party}</Badge>
-          <HouseBadge chamber="house" />
+          <HouseBadge house="hor" />
         </div>
       </div>
       <div className="whitespace-pre-wrap text-sm">
