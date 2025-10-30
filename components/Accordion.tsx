@@ -36,7 +36,7 @@ export const Accordion = (props: AccordionProps) => {
         <RadixAccordion.Item
           key={item.value}
           value={item.value}
-          className="border-b last:border-b-0 text-sm"
+          className="border-b border-dark-grey last:border-b-0 text-sm"
         >
           <RadixAccordion.Header>
             <RadixAccordion.Trigger className="flex w-full items-center justify-between px-2 py-2 font-medium text-left focus:outline-none">

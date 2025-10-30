@@ -53,7 +53,7 @@ export default async function BillsPage() {
       <div>
         <ol
           className={clsx(
-            "text-xs border-b py-2 px-2 flex items-center gap-1 text-gray-500",
+            "text-xs border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500",
             instrumentSans.className
           )}
         >
@@ -62,7 +62,7 @@ export default async function BillsPage() {
           </li>
         </ol>
       </div>
-      <div className="border-b px-2 py-4 flex flex-col gap-2">
+      <div className="border-b border-dark-grey px-2 py-4 flex flex-col gap-2">
         <h1 className="text-4xl font-semibold">Bills</h1>
         <h2 className={clsx(instrumentSans.className, "text-sm")}>
           An overview of discussion in parliament relating to bills.

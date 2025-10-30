@@ -36,16 +36,16 @@ export default function RootLayout({
   const filtersPromise = fetchFilters();
 
   return (
-    <html lang="en" className="dark text-[14px]">
+    <html lang="en" className="dark text-[14px] h-full">
       <body
-        className={`${lora.className} md:text-[18px] leading-7 text-dark-text bg-dark-bg`}
+        className={`${lora.className} md:text-[18px] leading-7 text-dark-text bg-dark-bg h-full`}
       >
         <header className="">
-          <div className="container m-auto sm:border-x">
+          <div className="container m-auto sm:border-x border-dark-grey">
             <NavBar filtersPromise={filtersPromise} />
           </div>
         </header>
-        <main className="container m-auto sm:border-x">{children}</main>
+        <main className="container m-auto sm:border-x border-dark-grey min-h-[calc(100vh-48px)]">{children}</main>
       </body>
     </html>
   );

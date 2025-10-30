@@ -101,7 +101,7 @@ export const BillsListTable = ({ data }: { data: BillsListResult[] }) => {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="border-b-2 last:border-0 border-gray-800"
+              className="border-b-2 last:border-0 border-dark-grey"
             >
               {row.getVisibleCells().map((cell) => (
                 <td

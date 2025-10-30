@@ -51,7 +51,7 @@ export default function NavBar({
   const pathname = usePathname();
   return (
     <>
-      <div className="flex h-[48px] border-b">
+      <div className="flex h-[48px] border-b border-dark-grey">
         {/* <Link href="/members"><MenuItem className="border-r">Members</MenuItem></Link>
         <Link href="/speeches">
           <MenuItem className="border-r">Speeches</MenuItem>
@@ -59,7 +59,7 @@ export default function NavBar({
         <MenuItem
           className={clsx(
             menuOpen && "bg-light-bg text-light-text",
-            !menuOpen && "bg-dark-bg border-r"
+            !menuOpen && "bg-dark-bg border-r border-dark-grey"
           )}
           onClick={() => {
             setMenuOpen((v) => !v);
@@ -72,7 +72,7 @@ export default function NavBar({
           <MenuItem
             className={clsx(
               filterOpen && "bg-light-bg text-light-text",
-              !filterOpen && "bg-dark-bg border-r"
+              !filterOpen && "bg-dark-bg border-r border-dark-grey"
             )}
             onClick={() => {
               setFilterOpen((v) => !v);
@@ -103,13 +103,13 @@ export default function NavBar({
       )}
       {menuOpen && (
         <ol className="z-10 absolute bg-light-bg text-light-text w-full h-full">
-          <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
+          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href={"/members"}>Members</Link>
           </li>
-          <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
+          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href="/speeches">Speeches</Link>
           </li>
-          <li className="transition flex items-center h-[48px] p-2 border-b border-gray-900 text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
+          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href="/bills">Bills</Link>
           </li>
         </ol>

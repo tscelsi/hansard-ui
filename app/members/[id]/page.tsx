@@ -107,7 +107,7 @@ export default async function MemberPage({
   return (
     <div className="container">
       <div>
-        <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+        <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
           <li>
             <Link
               href="/speeches"
@@ -129,7 +129,7 @@ export default async function MemberPage({
           </li>
         </ol>
       </div>
-      <div className="card py-3 px-2 border-b">
+      <div className="card py-3 px-2 border-b border-dark-grey">
         <h1 className="text-4xl font-semibold">{p0.talker_name}</h1>
         <h2>
           <span className="font-medium">Party:</span>{" "}
@@ -142,7 +142,7 @@ export default async function MemberPage({
         const href = `/speeches/${encodeURIComponent(p.speech_id)}`;
         return (
           <Link href={href as Route} key={p.speech_id}>
-            <div className="flex flex-col border-b p-2">
+            <div className="flex flex-col border-b border-dark-grey p-2">
               <SpeechListItem
                 title={p.subdebate_1_title || "Speech"}
                 category={p.debate_category}

@@ -78,7 +78,7 @@ export const SpeakerTable = ({ data }: { data: SpeakersResult[] }) => {
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="border-b-2 border-gray-800">
+            <tr key={headerGroup.id} className="border-b-2 border-dark-grey">
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
@@ -106,7 +106,7 @@ export const SpeakerTable = ({ data }: { data: SpeakersResult[] }) => {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="border-b-2 last:border-0 border-gray-800"
+              className="border-b-2 last:border-0 border-dark-grey"
             >
               {row.getVisibleCells().map((cell) => (
                 <td

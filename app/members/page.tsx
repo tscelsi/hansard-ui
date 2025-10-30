@@ -63,7 +63,7 @@ export default async function MembersListPage({
   return (
     <div>
       <div>
-        <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+        <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
           <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis">
             <span className={clsx(instrumentSans.className)}>
               Members
@@ -75,7 +75,7 @@ export default async function MembersListPage({
         const href = `/members/${encodeURIComponent(m.id)}`;
         return (
           <a key={m.id} href={href}>
-            <div className="hover:cursor-pointer flex flex-col gap-2 p-2 border-b">
+            <div className="hover:cursor-pointer flex flex-col gap-2 p-2 border-b border-dark-grey">
               <div className="flex flex-col gap-1">
                 <div className="hover:underline flex justify-between items-baseline text-3xl">
                   <strong>{m.name || "Unknown Member"}</strong>

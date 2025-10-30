@@ -126,7 +126,7 @@ export default async function SpeechesPage({
   return (
     <div>
       <div>
-        <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+        <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
           <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis">
             <span className={clsx(instrumentSans.className)}>Speeches</span>
           </li>
@@ -140,7 +140,7 @@ export default async function SpeechesPage({
         const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
         return (
           <Link key={s.speech_id} href={href as Route}>
-            <div className="flex flex-col border-b p-2">
+            <div className="flex flex-col border-b border-dark-grey p-2">
               <SpeechListItem
                 speaker={mainTalker?.name || undefined}
                 title={s.subdebate_1_title || "Speech"}

@@ -81,7 +81,7 @@ export default async function SpeechPage({
     <div className="container">
       <div>
         <div>
-          <ol className="border-b py-2 px-2 flex items-center gap-1 text-gray-500">
+          <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
             <li>
               <Link
                 href="/speeches"
@@ -101,7 +101,7 @@ export default async function SpeechPage({
             </li>
           </ol>
         </div>
-        <div className="border-b p-2 flex flex-col gap-2">
+        <div className="border-b border-dark-grey p-2 flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <p className="font-medium">{p0.talker_name}</p>
             {p0.bill_ids && p0.bill_ids.length > 0 && (
@@ -132,7 +132,7 @@ export default async function SpeechPage({
               <li key={p.speech_seq}>
                 <section
                   id={`${p.speech_seq}`}
-                  className="flex flex-col gap-2 border-b p-2"
+                  className="flex flex-col gap-2 border-b border-dark-grey p-2"
                 >
                   <div className="flex justify-between items-baseline">
                     <div className="flex flex-wrap items-center w-full gap-1">

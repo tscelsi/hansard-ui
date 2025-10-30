@@ -67,7 +67,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
       <div>
         <ol
           className={clsx(
-            "text-xs border-b py-2 px-2 flex items-center gap-1 text-gray-500",
+            "text-xs border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500",
             instrumentSans.className
           )}
         >
@@ -88,10 +88,10 @@ export default async function BillPage({ params }: { params: { id: string } }) {
           </li>
         </ol>
       </div>
-      <div className="border-b px-2 py-3 flex flex-col gap-2">
-        <h1 className="text-4xl font-semibold mb-1">{b0.subdebate_1_title}</h1>
+      <div className="border-b border-dark-grey px-2 py-3 flex flex-col gap-2">
+        <h1 className="text-4xl font-semibold">{b0.subdebate_1_title}</h1>
       </div>
-      <div className="flex flex-col gap-2 px-2 py-3 border-b">
+      <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Party Speech Proportion</h2>
         <PartySpeechProportionChart data={partySpeechProportions} />
         <p
@@ -101,7 +101,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
           {largestProportion.proportion}%.
         </p>
       </div>
-      <div className="flex flex-col gap-2 px-2 py-3 border-b">
+      <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Speeches Over Time</h2>
         <SpeechCountOverTimeByPartChart data={speechesOverTimeResult} />
         <p
@@ -111,11 +111,11 @@ export default async function BillPage({ params }: { params: { id: string } }) {
           year that speeches were given.
         </p>
       </div>
-      <div className="flex flex-col gap-2 px-2 py-3 border-b">
+      <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Top Speakers</h2>
         <SpeakerTable data={topSpeakersResult} />
       </div>
-      <div className="flex flex-col gap-2 px-2 py-3 border-b">
+      <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Speech List</h2>
         <Accordion
           items={speechListResult.map((el) => ({
