@@ -192,6 +192,7 @@ export const speakers = (
           speech_count: {
             $sum: 1,
           },
+          house: { $first: "$house" },
         },
       },
       {
@@ -210,6 +211,7 @@ export const speakers = (
           name: "$talker_info.name",
           party: "$talker_info.party",
           count: "$speech_count",
+          house: 1,
         },
       },
       {

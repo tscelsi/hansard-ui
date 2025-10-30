@@ -42,6 +42,7 @@ export const partySpeechCounts = async (db: Db, bill_id: string) => {
           _id: 0,
         },
       },
+      { $sort: { count: -1 } },
     ])
     .toArray();
   let partySpeechProportions: PartySpeechProportionsResult = {};
@@ -62,6 +63,7 @@ export type SpeakersResult = {
   name: string;
   party: string;
   count: number;
+  house: "hor" | "senate";
 };
 
 export const topSpeakers = (db: Db, bill_id: string) =>
@@ -80,6 +82,7 @@ export const topSpeakers = (db: Db, bill_id: string) =>
           speech_count: {
             $sum: 1,
           },
+          house: { $first: "$house" },
         },
       },
       {
@@ -97,6 +100,7 @@ export const topSpeakers = (db: Db, bill_id: string) =>
           name: "$talker_info.name",
           party: "$talker_info.party",
           count: "$speech_count",
+          house: 1,
         },
       },
       {

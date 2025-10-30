@@ -16,6 +16,7 @@ import clsx from "clsx";
 import { Route } from "next";
 import React from "react";
 import { ChevronDown12Filled } from "@fluentui/react-icons";
+import { HouseBadge } from "components/Badge";
 
 const columnHelper = createColumnHelper<SpeakersResult>();
 
@@ -33,6 +34,11 @@ const columns = [
   columnHelper.accessor("party", {
     header: "Party",
     cell: (info) => info.getValue(),
+    sortingFn: "alphanumeric",
+  }),
+  columnHelper.accessor("house", {
+    header: "House",
+    cell: (info) => <HouseBadge house={info.getValue()} />,
     sortingFn: "alphanumeric",
   }),
   columnHelper.accessor("count", {
@@ -74,7 +80,9 @@ export const SpeakerTable = ({ data }: { data: SpeakersResult[] }) => {
   });
 
   return (
-    <div className={clsx("text-sm flex flex-col gap-2", instrumentSans.className)}>
+    <div
+      className={clsx("text-sm flex flex-col gap-2", instrumentSans.className)}
+    >
       <table className="w-full">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
