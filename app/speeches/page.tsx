@@ -6,12 +6,13 @@ import { SpeechListItem } from "components/SpeechListItem";
 import { Route } from "next";
 import Link from "next/link";
 
-type SpeechListItem = {
+type SpeechListItemType = {
   speech_id: string;
   date: string;
   debate_category: string;
   subdebate_1_title: string;
   bill_ids: string[] | null;
+  house: "hor" | "senate";
   speech_part_type: "interjection" | "continuation" | "speech";
   first_content: string;
   main_talker_id: string;
@@ -87,6 +88,7 @@ export default async function SpeechesPage({
         debate_category: "$first.debate_category",
         subdebate_1_title: "$first.subdebate_1_title",
         bill_ids: "$first.bill_ids",
+        house: "$first.house",
         speech_part_type: "$first.speech_part_type",
         first_content: "$first.speech_content",
         main_talker_id: "$first.talker_id",
@@ -96,10 +98,10 @@ export default async function SpeechesPage({
     { $sort: { date: -1 } },
     { $limit: 200 },
   ];
-  const summaries = (await db
+  const summaries = await db
     .collection("parts")
-    .aggregate<SpeechListItem>(pipeline)
-    .toArray());
+    .aggregate<SpeechListItemType>(pipeline)
+    .toArray();
 
   const talkerIds = Array.from(
     new Set(
@@ -143,6 +145,7 @@ export default async function SpeechesPage({
                 speaker={mainTalker?.name || undefined}
                 title={s.subdebate_1_title || "Speech"}
                 category={s.debate_category}
+                house={s.house}
                 party={mainTalker?.party || "Unknown"}
                 content={s.first_content || ""}
                 date={s.date}
