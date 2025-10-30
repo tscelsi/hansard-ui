@@ -8,8 +8,8 @@ export type PartySpeechCountsResult = {
 
 export type PartySpeechProportionsResult = Record<string, number>;
 
-export const partySpeechCounts = (db: Db, bill_id: string) =>
-  db
+export const partySpeechCounts = async (db: Db, bill_id: string) => {
+  const result = await db
     .collection("parts")
     .aggregate<PartySpeechCountsResult>([
       {
@@ -44,8 +44,20 @@ export const partySpeechCounts = (db: Db, bill_id: string) =>
       },
     ])
     .toArray();
+  let partySpeechProportions: PartySpeechProportionsResult = {};
+  if (result) {
+    const totalSpeeches = result.reduce((sum, p) => sum + p.count, 0);
+    partySpeechProportions = result.reduce((acc, p) => {
+      acc[p.party] = totalSpeeches
+        ? parseFloat(((p.count / totalSpeeches) * 100).toFixed(2))
+        : 0;
+      return acc;
+    }, {} as PartySpeechProportionsResult);
+  }
+  return partySpeechProportions;
+};
 
-export type TopSpeakersResult = {
+export type SpeakersResult = {
   id: string;
   name: string;
   party: string;
@@ -55,7 +67,7 @@ export type TopSpeakersResult = {
 export const topSpeakers = (db: Db, bill_id: string) =>
   db
     .collection("parts")
-    .aggregate<TopSpeakersResult>([
+    .aggregate<SpeakersResult>([
       {
         $match: {
           bill_ids: bill_id,
@@ -174,7 +186,8 @@ export const speechList = (db: Db, bill_id: string) =>
 
 export type SpeechesOverTimeResult = {
   date: Date;
-  count: number;
+  hor?: number;
+  senate?: number;
 };
 
 const latestSittingDays = [
@@ -201,33 +214,61 @@ const latestSittingDays = [
 export const speechesOverTime = async (db: Db, bill_id: string) => {
   const result = await db
     .collection("parts")
-    .aggregate<SpeechesOverTimeResult>([
+    .aggregate<{ date: Date; hor?: number; senate?: number }>([
       { $match: { bill_ids: bill_id, speech_seq: 0 } },
       {
         $group: {
           _id: {
             date: "$date",
+            house: "$house",
           },
           count: { $sum: 1 },
         },
       },
       {
+        $group: {
+          _id: "$_id.date",
+          counts: {
+            $push: {
+              k: "$_id.house",
+              v: "$count",
+            },
+          },
+        },
+      },
+      {
         $project: {
           _id: 0,
-          date: "$_id.date",
-          count: 1,
+          date: "$_id",
+          counts: 1,
+        },
+      },
+      {
+        $addFields: {
+          countsObj: {
+            $arrayToObject: "$counts",
+          },
+        },
+      },
+      {
+        $project: {
+          date: 1,
+          hor: "$countsObj.hor",
+          senate: "$countsObj.senate",
         },
       },
     ])
     .toArray();
   // add results for each missing date from the sitting days
-  const existingDates = result.map((r) => r.date.toISOString().split("T")[0]);
-  latestSittingDays.forEach((date) => {
+  const existingDates = new Set(
+    result.map((r) => r.date.toISOString().split("T")[0])
+  );
+  for (const date of latestSittingDays) {
     const dateStr = date.toISOString().split("T")[0];
-    if (!existingDates.includes(dateStr)) {
-      result.push({ date: date, count: 0 });
+    if (!existingDates.has(dateStr)) {
+      result.push({ date, hor: 0, senate: 0 });
     }
-  });
+  }
   // sort by date ascending
   result.sort((a, b) => a.date.getTime() - b.date.getTime());
 

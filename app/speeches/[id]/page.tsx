@@ -104,15 +104,15 @@ export default async function SpeechPage({
         <div className="border-b p-2 flex flex-col gap-2">
           <div className="flex justify-between items-center">
             <p className="font-medium">{p0.talker_name}</p>
-            {/* {p0.bill_ids && p0.bill_ids.length > 0 && (
+            {p0.bill_ids && p0.bill_ids.length > 0 && (
               <Link
-                href={`/bills/${encodeURIComponent(p0.bill_id)}`}
+                href={`/bills/${encodeURIComponent(p0.bill_ids[0])}`}
                 className="flex gap-1 text-link-blue hover:underline hover:cursor-pointer"
               >
                 <span className="text-xs">Go to bill</span>
                 <ArrowUpRight12Filled />
               </Link>
-            )} */}
+            )}
           </div>
           <h1 className="text-4xl font-semibold">{title}</h1>
           <div>

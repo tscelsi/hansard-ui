@@ -17,14 +17,14 @@ import {
   PartySpeechProportionChart,
   SpeechCountOverTimeByPartChart,
 } from "components/charts/speechCountOverTime";
-import { TopSpeakerTable } from "components/tables/TopSpeakerTable";
+import { SpeakerTable } from "components/tables/SpeakerTable";
 import Link from "next/link";
 
 export default async function BillPage({ params }: { params: { id: string } }) {
   const billId = params.id;
   const db = await getDb();
   const [
-    partySpeechCountsResult,
+    partySpeechProportions,
     speechesOverTimeResult,
     topSpeakersResult,
     speechListResult,
@@ -51,21 +51,6 @@ export default async function BillPage({ params }: { params: { id: string } }) {
 
   const b0 = speechListResult[speechListResult.length - 1].parts[0];
 
-  let partySpeechProportions: PartySpeechProportionsResult = {};
-  if (partySpeechCountsResult) {
-    const totalSpeeches = partySpeechCountsResult.reduce(
-      (sum, p) => sum + p.count,
-      0
-    );
-    partySpeechProportions = partySpeechCountsResult.reduce((acc, p) => {
-      acc[p.party] = totalSpeeches
-        ? parseFloat(((p.count / totalSpeeches) * 100).toFixed(2))
-        : 0;
-      return acc;
-    }, {} as PartySpeechProportionsResult);
-  }
-
-  console.log(partySpeechProportions);
   const largestProportion = Object.entries(partySpeechProportions).reduce(
     (acc, [party, proportion]) => {
       // get the max proportion and party
@@ -128,7 +113,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Top Speakers</h2>
-        <TopSpeakerTable data={topSpeakersResult} />
+        <SpeakerTable data={topSpeakersResult} />
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b">
         <h2 className="text-2xl font-semibold">Speech List</h2>
@@ -151,6 +136,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
                           electorate={part.talker_electorate}
                           party={part.talker_party}
                           content={part.speech_content}
+                          house={part.house}
                           chamber={part.chamber}
                         />
                       </Link>
@@ -163,7 +149,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
                         </h2>
                         <div className="flex flex-wrap gap-1">
                           <Badge>First Reading</Badge>
-                          <HouseBadge house="hor" />
+                          <HouseBadge house={part.house} />
                         </div>
                       </div>
                     );

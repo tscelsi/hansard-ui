@@ -5,8 +5,6 @@ import * as Checkbox from "@radix-ui/react-checkbox";
 import { useEffect, useMemo, useState } from "react";
 import Badge from "./Badge";
 import {
-  Checkmark12Filled,
-  ChevronDown16Filled,
   ChevronDown20Filled,
 } from "@fluentui/react-icons";
 

@@ -8,6 +8,7 @@ export const SpeechListItem = ({
   speaker,
   category,
   party,
+  house,
   content,
   date,
 }: {
@@ -15,6 +16,7 @@ export const SpeechListItem = ({
   speaker?: string;
   category: string;
   party: string;
+  house: "hor" | "senate";
   content: string;
   date?: string;
 }) => {
@@ -29,7 +31,7 @@ export const SpeechListItem = ({
         <div className="flex flex-wrap gap-1">
           <Badge>{category}</Badge>
           <Badge>{party}</Badge>
-          <HouseBadge house="hor" />
+          <HouseBadge house={house} />
         </div>
       </div>
       <div className="whitespace-pre-wrap text-sm">

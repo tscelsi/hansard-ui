@@ -21,7 +21,14 @@ const colourMap: Record<string, string> = {
   ALP: "#6C242A",
   AG: "#007236",
   IND: "#008080",
+  CA: "#FF5800",
+  AV: "#AC0E4B"
 };
+
+const house_display_map = {
+  hor: "House of Representatives",
+  senate: "Senate",
+}
 
 export const SpeechCountOverTimeByPartChart = ({
   data,
@@ -89,7 +96,7 @@ export const SpeechCountOverTimeByPartChart = ({
                     key={idx}
                     className="flex items-center justify-between text-sm"
                   >
-                    <span className="font-medium">{entry.name || "Count"}</span>
+                    <span className="font-medium">{house_display_map[entry.name] || "Count"}</span>
                     <span className="ml-2">{entry.value}</span>
                   </div>
                 ))}
@@ -97,7 +104,8 @@ export const SpeechCountOverTimeByPartChart = ({
             );
           }}
         />
-        <Bar dataKey="count" fill="#82ca9d"/>
+        <Bar stackId="a" dataKey="hor" fill="#4E8A76"/>
+        <Bar stackId="a" dataKey="senate" fill="#9C351D"/>
       </BarChart>
     </div>
   );
@@ -111,15 +119,11 @@ export const PartySpeechProportionChart = ({
   return (
     <div className="h-[20px] flex flex-row gap-0.5">
       {Object.entries(data)
-        .sort((a, b) => {
-          // alphabetical
-          return a[0].localeCompare(b[0]);
-        })
         .map(([party, proportion]) => (
           <div
             key={party}
             className={clsx(
-              "first:rounded-l-lg flex items-center justify-center last:rounded-r-lg h-full text-xs font-semibold text-dark-text",
+              "first:rounded-l-lg flex items-center justify-center last:rounded-r-lg h-full text-xs font-semibold text-dark-text overflow-hidden",
               instrumentSans.className
             )}
             style={{

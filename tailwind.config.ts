@@ -18,6 +18,8 @@ export default {
         "link-blue": "#527AFF",
         ALP: "#6C242A",
         LP: "#1E1B56",
+        senate: "#9C351D",
+        hor: "#4E8A76",
       },
     },
   },

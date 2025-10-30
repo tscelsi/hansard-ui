@@ -147,6 +147,7 @@ export default async function MemberPage({
                 title={p.subdebate_1_title || "Speech"}
                 category={p.debate_category}
                 party={p.talker_party}
+                house={p.house}
                 content={p.speech_content || ""}
                 date={p.date}
               />

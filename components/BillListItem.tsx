@@ -6,6 +6,7 @@ export const BillListItem = ({
   electorate,
   party,
   content,
+  house,
   chamber,
 }: {
   speaker?: string;
@@ -13,7 +14,8 @@ export const BillListItem = ({
   electorate: string;
   party: string;
   content: string;
-  chamber: string;
+  house: "hor" | "senate";
+  chamber: "main" | "federation" | "unknown";
 }) => {
   const snippet = content.substring(0, 120);
   return (
@@ -26,7 +28,7 @@ export const BillListItem = ({
           <Badge>{category}</Badge>
           <Badge>{party}</Badge>
           <Badge>{chamber}</Badge>
-          <HouseBadge house="hor" />
+          <HouseBadge house={house} />
         </div>
       </div>
       <div className="whitespace-pre-wrap text-sm">

@@ -5,11 +5,12 @@ export type Talker = {
   party: string;
 };
 
-type ChamberType = "Main Chamber" | "Federation Chamber" | "Unknown Chamber";
+type ChamberType = "main" | "federation" | "unknown";
 
 export type Part = {
   id: string;
   date: string; // ISO string
+  house: "hor" | "senate"
   bill_ids?: string[] | null;
   chamber: ChamberType;
   type: "speech" | "first_reading"
