@@ -25,7 +25,7 @@ const colourMap: Record<string, string> = {
   AV: "#AC0E4B"
 };
 
-const house_display_map = {
+const house_display_map: Record<"hor" | "senate", string> = {
   hor: "House of Representatives",
   senate: "Senate",
 }
@@ -96,7 +96,7 @@ export const SpeechCountOverTimeByPartChart = ({
                     key={idx}
                     className="flex items-center justify-between text-sm"
                   >
-                    <span className="font-medium">{house_display_map[entry.name] || "Count"}</span>
+                    <span className="font-medium">{house_display_map[entry.name as "hor" | "senate"] || "Count"}</span>
                     <span className="ml-2">{entry.value}</span>
                   </div>
                 ))}
