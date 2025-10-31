@@ -30,8 +30,7 @@ const pageNeedsFilter = (pathname: string) => {
   const segments = pathname.split("/");
   const length = segments.length;
   return (
-    (length === 2 &&
-      (segments[1] === "members")) ||
+    (length === 2 && segments[1] === "members") ||
     (length === 3 && segments[1] === "members")
   );
 };
@@ -68,39 +67,12 @@ export default function NavBar({
         >
           <List24Filled />
         </MenuItem>
-        {pageNeedsFilter(pathname) && (
-          <MenuItem
-            className={clsx(
-              filterOpen && "bg-light-bg text-light-text",
-              !filterOpen && "bg-dark-bg border-r border-dark-grey"
-            )}
-            onClick={() => {
-              setFilterOpen((v) => !v);
-              if (menuOpen) setMenuOpen(false);
-            }}
-          >
-            {!filterOpen ? (
-              <Search24Filled
-                className={clsx(filterOpen && "font-light-text")}
-              />
-            ) : (
-              <Dismiss24Filled />
-            )}
-          </MenuItem>
-        )}
         <div className="flex flex-1 justify-end text-3xl p-2">
-          <Link href="/" className="font-medium hover:opacity-90 transition">Hansard.</Link>
+          <Link href="/" className="font-medium hover:opacity-90 transition">
+            Hansard.
+          </Link>
         </div>
       </div>
-      {filterOpen && (
-        <div className="absolute bg-light-bg text-light-text w-full h-full">
-          <SpeechFilters
-            categoryOptions={filters.categories}
-            partyOptions={filters.parties}
-            electorateOptions={filters.electorates}
-          />
-        </div>
-      )}
       {menuOpen && (
         <ol className="z-10 absolute bg-light-bg text-light-text w-full h-full">
           <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">

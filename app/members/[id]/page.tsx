@@ -120,7 +120,7 @@ export default async function MemberPage({
         <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
           <li>
             <Link
-              href="/speeches"
+              href="/members"
               className={clsx(
                 instrumentSans.className,
                 "flex text-xs hover:text-dark-text/80 transition"
