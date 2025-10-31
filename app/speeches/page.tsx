@@ -75,12 +75,14 @@ export default async function SpeechesPage({
   const electoratesSel = toArr(searchParams.electorate);
   const from = toStr(searchParams.from);
   const to = toStr(searchParams.to);
+  const house = toArr(searchParams.house);
   const query = toStr(searchParams.query);
   const match: any = {};
   if (categoriesSel.length) match.debate_category = { $in: categoriesSel };
   if (partiesSel.length) match["talker_info.party"] = { $in: partiesSel };
   if (electoratesSel.length)
     match["talker_info.electorate"] = { $in: electoratesSel };
+  if (house.length) match.house = { $in: house };
   const range: any = {};
   if (from) {
     const d = new Date(from);
@@ -297,24 +299,6 @@ export default async function SpeechesPage({
           No speeches found for current filters.
         </p>
       )}
-      {/* {summaries.map((s) => {
-        const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
-        return (
-          <Link key={s.speech_id} href={href as Route}>
-            <div className="flex flex-col border-b border-dark-grey p-2">
-              <SpeechListItem
-                speaker={s.talker_name || undefined}
-                title={s.subdebate_1_title || "Speech"}
-                category={s.debate_category}
-                house={s.house}
-                party={s.talker_party || "Unknown"}
-                content={s.speech_content || ""}
-                date={s.date}
-              />
-            </div>
-          </Link>
-        );
-      })} */}
     </div>
   );
 }
