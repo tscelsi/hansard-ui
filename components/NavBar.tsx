@@ -1,13 +1,8 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import {
-  Dismiss24Filled,
-  List24Filled,
-  Search24Filled,
-} from "@fluentui/react-icons";
+import { List24Filled } from "@fluentui/react-icons";
 import clsx from "clsx";
-import SpeechFilters from "./SpeechFilters";
 import { usePathname } from "next/navigation";
 
 type MenuItemProps = {
