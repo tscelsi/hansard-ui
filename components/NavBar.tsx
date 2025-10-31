@@ -42,14 +42,9 @@ export default function NavBar({
   const filters = React.use(filtersPromise);
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const pathname = usePathname();
   return (
     <>
       <div className="flex h-[48px] border-b border-dark-grey">
-        {/* <Link href="/members"><MenuItem className="border-r">Members</MenuItem></Link>
-        <Link href="/speeches">
-          <MenuItem className="border-r">Speeches</MenuItem>
-        </Link> */}
         <MenuItem
           className={clsx(
             menuOpen && "bg-light-bg text-light-text",
@@ -69,7 +64,7 @@ export default function NavBar({
         </div>
       </div>
       {menuOpen && (
-        <ol className="z-10 absolute bg-light-bg text-light-text w-full h-full">
+        <ol className="z-10 absolute bg-light-bg text-light-text w-full h-fit">
           <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey text-2xl font-semibold hover:cursor-pointer hover:bg-dark-bg/10">
             <Link href={"/members"}>Members</Link>
           </li>
