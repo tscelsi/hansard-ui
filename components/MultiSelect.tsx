@@ -16,7 +16,7 @@ export type MultiSelectOption = {
 type Props = {
   name: string;
   label?: string;
-  onChange: (selected: string[]) => void;
+  onChange?: (selected: string[]) => void;
   options: MultiSelectOption[];
   defaultValues?: string[];
   placeholder?: string;
@@ -42,7 +42,7 @@ export default function MultiSelect({
   }, [selected, options]);
 
   useEffect(() => {
-    onChange(selected);
+    if (onChange) onChange(selected);
   }, [selected]);
 
   const toggle = (v: string) => {
@@ -52,7 +52,7 @@ export default function MultiSelect({
   };
 
   return (
-    <div className="border-b border-light-text min-h-[64px]">
+    <div className="border-b border-r border-dark-grey min-h-[64px]">
       {/* Hidden inputs for form submission (GET) */}
       {selected.map((v) => (
         <input key={v} type="hidden" name={name} value={v} />

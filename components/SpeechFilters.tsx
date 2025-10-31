@@ -31,18 +31,19 @@ export default function SpeechFilters({
   const pathSegments = pathname.split("/");
   const { replace } = useRouter();
 
-  function handleChange(
+  const handleChange = React.useCallback((
     type: "debate_category" | "party" | "electorate" | "from" | "to",
     v: string[]
-  ) {
+  ) => {
     const params = new URLSearchParams(searchParams);
     params.delete(type);
     for (const cat of v) {
       params.append(type, cat);
     }
+    if (params === searchParams) return;
     const path = `${pathname}?${params.toString()}`
     replace(path as Route);
-  }
+  }, [searchParams, pathname, replace]);
 
   const from = toStr(searchParams.get("from"));
   const to = toStr(searchParams.get("to"));

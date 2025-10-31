@@ -24,7 +24,7 @@ export const SpeechListItem = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-1">
-        {speaker && <p className="text-xs">{speaker}</p>}
+        {speaker && <p className={clsx(instrumentSans.className, "text-xs")}>{speaker}</p>}
         <h2 className="hover:underline flex justify-between items-baseline font-medium text-lg">
           {title}
         </h2>

@@ -116,7 +116,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
         <SpeakerTable data={topSpeakersResult} />
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
-        <h2 className="text-2xl font-semibold">Speech List</h2>
+        <h2 className="text-2xl font-semibold">Timeline</h2>
         <Accordion
           items={speechListResult.map((el) => ({
             value: formatDate(el._id),
