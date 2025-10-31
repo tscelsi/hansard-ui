@@ -31,7 +31,7 @@ const pageNeedsFilter = (pathname: string) => {
   const length = segments.length;
   return (
     (length === 2 &&
-      (segments[1] === "speeches" || segments[1] === "members")) ||
+      (segments[1] === "members")) ||
     (length === 3 && segments[1] === "members")
   );
 };

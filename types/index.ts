@@ -10,10 +10,10 @@ type ChamberType = "main" | "federation" | "unknown";
 export type Part = {
   id: string;
   date: string; // ISO string
-  house: "hor" | "senate"
+  house: "hor" | "senate";
   bill_ids?: string[] | null;
   chamber: ChamberType;
-  type: "speech" | "first_reading"
+  type: "speech" | "first_reading";
   debate_category: string;
   debate_seq: number;
   subdebate_1_title: string;
@@ -24,14 +24,15 @@ export type Part = {
   subdebate_2_seq: number | null;
 };
 
+export type SpeechPartType = "interjection" | "continuation" | "speech";
 
 export type SpeechPart = {
   speech_id: string; // UUID as string
   speech_seq: number;
   talker_id: string;
   speech_content: string;
-  speech_part_type: 'interjection' | 'continuation' | 'speech';
-} & Part
+  speech_part_type: SpeechPartType;
+} & Part;
 
 export type SpeechPartWithTalkerInfo = {
   talker_name: string;

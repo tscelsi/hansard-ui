@@ -7,6 +7,7 @@ import Badge from "./Badge";
 import {
   ChevronDown20Filled,
 } from "@fluentui/react-icons";
+import clsx from "clsx";
 
 export type MultiSelectOption = {
   label: string;
@@ -16,7 +17,6 @@ export type MultiSelectOption = {
 type Props = {
   name: string;
   label?: string;
-  onChange?: (selected: string[]) => void;
   options: MultiSelectOption[];
   defaultValues?: string[];
   placeholder?: string;
@@ -27,12 +27,14 @@ export default function MultiSelect({
   name,
   label,
   options,
-  onChange,
   defaultValues = [],
   placeholder = "Select…",
+  className,
 }: Props) {
-  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<string[]>(defaultValues);
+  useEffect(() => {
+    setSelected(defaultValues);
+  }, [defaultValues])
 
   const selectedOptions = useMemo(() => {
     const map = new Map(options.map((o) => [o.value, o] as const));
@@ -41,10 +43,6 @@ export default function MultiSelect({
       .filter(Boolean) as MultiSelectOption[];
   }, [selected, options]);
 
-  useEffect(() => {
-    if (onChange) onChange(selected);
-  }, [selected]);
-
   const toggle = (v: string) => {
     setSelected((prev) =>
       prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
@@ -52,12 +50,12 @@ export default function MultiSelect({
   };
 
   return (
-    <div className="border-b border-r border-dark-grey min-h-[64px]">
+    <div className={clsx(className, "border-b border-r border-dark-grey min-h-[64px]")}>
       {/* Hidden inputs for form submission (GET) */}
       {selected.map((v) => (
         <input key={v} type="hidden" name={name} value={v} />
       ))}
-      <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Root>
         <Popover.Trigger asChild>
           <button
             type="button"

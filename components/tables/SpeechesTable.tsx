@@ -35,6 +35,7 @@ const columns = [
               party={s.talker_party || "Unknown"}
               content={s.speech_content || ""}
               date={s.date}
+              electorate={s.talker_electorate}
             />
           </div>
         </Link>

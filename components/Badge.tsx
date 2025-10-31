@@ -64,3 +64,18 @@ export const HouseBadge = ({
     </Badge>
   );
 };
+
+export const IconBadge = ({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Badge className="flex items-center gap-1">
+      {icon}
+      {children}
+    </Badge>
+  );
+}

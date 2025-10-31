@@ -5,8 +5,14 @@ import clsx from "clsx";
 import MultiSelect from "components/MultiSelect";
 import { SpeechListItem } from "components/SpeechListItem";
 import { SpeechesTable } from "components/tables/SpeechesTable";
-import { Route } from "next";
+import * as Accordion from "@radix-ui/react-accordion";
 import Link from "next/link";
+import {
+  ChevronDown12Filled,
+  Filter12Filled,
+  Filter16Filled,
+  Filter20Filled,
+} from "@fluentui/react-icons";
 
 type SpeechListItemType = {
   speech_id: string;
@@ -160,14 +166,6 @@ export default async function SpeechesPage({
   ]);
   const total = totalAgg[0]?.total ?? 0;
 
-  if (summaries.length === 0) {
-    return (
-      <p className="text-gray-500 dark:text-gray-400">
-        No speeches found for current filters.
-      </p>
-    );
-  }
-
   return (
     <div>
       <div>
@@ -177,9 +175,16 @@ export default async function SpeechesPage({
           </li>
         </ol>
       </div>
+      <div className="border-b border-dark-grey px-2 py-4 flex flex-col gap-2">
+        <h1 className="text-4xl font-semibold">Speeches</h1>
+        <h2 className={clsx(instrumentSans.className, "text-sm")}>
+          Search through speeches in parliament. Use the filters to narrow down
+          results.
+        </h2>
+      </div>
       <div className="flex">
-        <form method="get" className="flex flex-1 flex-wrap items-center">
-          <div className="flex flex-col gap-2 border-b border-r border-dark-grey h-[64px] flex-1">
+        <form method="get" className="flex flex-1 flex-wrap items-stretch">
+          <div className="flex flex-col gap-2 border-b border-r border-dark-grey min-h-[64px] flex-1 sm:flex-2">
             <input
               id="query"
               name="query"
@@ -190,6 +195,7 @@ export default async function SpeechesPage({
                 "font-medium bg-dark-bg text-sm h-full focus:outline-none px-2 text-xl overflow-scroll"
               )}
               placeholder="Search..."
+              maxLength={60}
             />
           </div>
           <MultiSelect
@@ -197,21 +203,30 @@ export default async function SpeechesPage({
             name="party"
             options={partyOptions.map((p) => ({ value: p, label: p }))}
             defaultValues={toArr(searchParams.party)}
+            className="flex-1"
             placeholder="All"
           />
           <MultiSelect
             label="Category"
             name="debate_category"
-            options={categoryOptions.map((c) => ({ label: c, value: c }))}
+            options={categoryOptions.map((c) => ({
+              label: c,
+              value: c,
+            }))}
             defaultValues={toArr(searchParams.debate_category)}
             placeholder="All"
+            className="flex-1"
           />
           <MultiSelect
             name="electorate"
             label="Electorate"
-            options={electorateOptions.map((e) => ({ value: e, label: e }))}
+            options={electorateOptions.map((e) => ({
+              value: e,
+              label: e,
+            }))}
             defaultValues={toArr(searchParams.electorate)}
             placeholder="All"
+            className="flex-1"
           />
           <MultiSelect
             name="house"
@@ -222,8 +237,9 @@ export default async function SpeechesPage({
             ]}
             defaultValues={toArr(searchParams.house)}
             placeholder="All"
+            className="flex-1"
           />
-          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px]">
+          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px] flex-1">
             <label htmlFor="from" className="block text-xs font-bold">
               Earliest
             </label>
@@ -235,7 +251,7 @@ export default async function SpeechesPage({
               className={clsx(instrumentSans.className, "bg-dark-bg text-sm")}
             />
           </div>
-          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px]">
+          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px] flex-1">
             <label htmlFor="to" className="block text-xs font-bold">
               Latest
             </label>
@@ -247,25 +263,40 @@ export default async function SpeechesPage({
               className={clsx(instrumentSans.className, "bg-dark-bg text-sm")}
             />
           </div>
-          <button
-            type="submit"
-            className="ml-2 px-4 py-2 bg-blue-600 text-white rounded"
-          >
-            Apply Filters
-          </button>
-          <Link href="/speeches">
-            <button className="ml-2 px-4 py-2 bg-gray-600 text-white rounded">
-              Clear Filters
+          <div className="border-b border-dark-grey h-[64px] flex-1 flex items-center p-2 gap-2 border-r">
+            <button
+              type="submit"
+              className={clsx(
+                instrumentSans.className,
+                "p-2 text-dark-text rounded border border-light-grey text-sm"
+              )}
+            >
+              Apply
             </button>
-          </Link>
+            <Link
+              href="/speeches"
+              className={clsx(
+                instrumentSans.className,
+                "p-2 bg-light-bg text-light-text text-center rounded border border-dark-grey text-sm"
+              )}
+            >
+              Clear
+            </Link>
+          </div>
         </form>
       </div>
-      <SpeechesTable
-        data={summaries}
-        total={total}
-        page={page}
-        pageSize={pageSize}
-      />
+      {summaries.length > 0 ? (
+        <SpeechesTable
+          data={summaries}
+          total={total}
+          page={page}
+          pageSize={pageSize}
+        />
+      ) : (
+        <p className="text-gray-500 dark:text-gray-400">
+          No speeches found for current filters.
+        </p>
+      )}
       {/* {summaries.map((s) => {
         const href = `/speeches/${encodeURIComponent(s.speech_id)}`;
         return (
