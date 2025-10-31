@@ -122,7 +122,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
             value: formatDate(el._id),
             trigger: formatDate(el._id),
             content: (
-              <div className="flex flex-col gap-y-4">
+              <div key={el._id.toISOString()} className="flex flex-col gap-y-4">
                 {el.parts.map((part) => {
                   if (part.type === "speech") {
                     return (
