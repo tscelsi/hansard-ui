@@ -37,7 +37,7 @@ export const SpeechListItem = ({
         </p>
       )}
       <div className="flex flex-col gap-1">
-        <h2 className="hover:underline flex justify-between items-baseline font-medium text-xl">
+        <h2 className="hover:underline flex justify-between items-baseline font-medium text-xl whitespace-pre-wrap">
           {title}
         </h2>
         <div className="flex flex-wrap gap-1">

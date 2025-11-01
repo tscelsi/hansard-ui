@@ -4,9 +4,7 @@ import * as Popover from "@radix-ui/react-popover";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useEffect, useMemo, useState } from "react";
 import Badge from "./Badge";
-import {
-  ChevronDown20Filled,
-} from "@fluentui/react-icons";
+import { ChevronDown20Filled } from "@fluentui/react-icons";
 import clsx from "clsx";
 
 export type MultiSelectOption = {
@@ -34,7 +32,7 @@ export default function MultiSelect({
   const [selected, setSelected] = useState<string[]>(defaultValues);
   useEffect(() => {
     setSelected(defaultValues);
-  }, [defaultValues])
+  }, [defaultValues]);
 
   const selectedOptions = useMemo(() => {
     const map = new Map(options.map((o) => [o.value, o] as const));
@@ -50,7 +48,12 @@ export default function MultiSelect({
   };
 
   return (
-    <div className={clsx(className, "border-b border-r border-dark-grey min-h-[64px]")}>
+    <div
+      className={clsx(
+        className,
+        "border-b border-r border-dark-grey min-h-[64px]"
+      )}
+    >
       {/* Hidden inputs for form submission (GET) */}
       {selected.map((v) => (
         <input key={v} type="hidden" name={name} value={v} />
@@ -74,7 +77,6 @@ export default function MultiSelect({
                   <>
                     {selectedOptions.map((opt) => (
                       <Badge
-                        dark
                         key={opt.value}
                         onDismiss={() => toggle(opt.value)}
                       >
@@ -85,9 +87,8 @@ export default function MultiSelect({
                 )}
                 {selectedOptions.length > 5 && (
                   <Badge
-                    dark
                     title={selectedOptions.map((o) => o.label).join(", ")}
-                    className="text-gray-300 border-gray-700"
+                    className="border-gray-700"
                   >
                     +{selectedOptions.length}
                   </Badge>
@@ -101,14 +102,14 @@ export default function MultiSelect({
         </Popover.Trigger>
         <Popover.Content
           sideOffset={8}
-          className="z-50 max-h-80 w-[260px] overflow-auto rounded-md border border-gray-700 bg-gray-900 p-1 shadow-xl focus:outline-none"
+          className="z-50 max-h-80 w-[260px] overflow-auto rounded-md border border-gray-700 text-light-text bg-light-bg dark:bg-dark-bg dark:text-dark-text shadow-xl focus:outline-none"
         >
           <ul role="listbox" className="divide-y divide-gray-800">
             {options.map((opt) => {
               const checked = selected.includes(opt.value);
               return (
                 <li key={opt.value} className="">
-                  <label className="flex cursor-pointer items-center gap-2 px-2 py-2 text-gray-200 hover:bg-gray-800">
+                  <label className="flex cursor-pointer items-center gap-2 px-2 py-2 hover:bg-light-grey dark:hover:bg-dark-grey">
                     <Checkbox.Root
                       checked={checked}
                       onCheckedChange={() => toggle(opt.value)}

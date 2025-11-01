@@ -115,7 +115,7 @@ export const SpeechesTable = ({
         </thead> */}
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="border-b-2 last:border-0 border-dark-grey">
+            <tr key={row.id} className="border-b last:border-0 border-dark-grey">
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
@@ -129,17 +129,17 @@ export const SpeechesTable = ({
           ))}
         </tbody>
       </table>
-      <div className="flex items-center justify-between mb-2">
+      <div className={clsx(instrumentSans.className, "px-2 flex items-center justify-between mb-2")}>
         <div>
           <button
-            className="px-2 py-1 border rounded disabled:opacity-50 mr-2"
+            className="px-2 py-1 border border-dark-grey rounded disabled:opacity-50 mr-2"
             onClick={goPrev}
             disabled={pageIndex <= 0}
           >
             Previous
           </button>
           <button
-            className="px-2 py-1 border rounded disabled:opacity-50"
+            className="px-2 py-1 border border-dark-grey rounded disabled:opacity-50"
             onClick={goNext}
             disabled={pageIndex + 1 >= pageCount}
           >
@@ -153,7 +153,7 @@ export const SpeechesTable = ({
           <label className="flex gap-2 items-center">
             Rows per page
             <select
-              className="bg-dark-bg border rounded px-1 py-0.5"
+              className="bg-light-bg dark:bg-dark-bg border border-dark-grey rounded px-1 py-0.5"
               value={pageSize}
               onChange={(e) => setRowsPerPage(Number(e.target.value))}
             >

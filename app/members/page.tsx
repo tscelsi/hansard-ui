@@ -96,8 +96,8 @@ export default async function MembersListPage({
   return (
     <div>
       <div>
-        <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
-          <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis">
+        <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 dark:text-dark-text text-light-text">
+          <li className="text-xs text-nowrap overflow-hidden text-ellipsis">
             <span className={clsx(instrumentSans.className)}>Members</span>
           </li>
         </ol>
@@ -119,7 +119,7 @@ export default async function MembersListPage({
               defaultValue={query}
               className={clsx(
                 instrumentSans.className,
-                "font-medium bg-dark-bg text-sm h-full focus:outline-none px-2 text-xl overflow-scroll"
+                "font-medium bg-light-bg dark:bg-dark-bg text-sm h-full focus:outline-none px-2 text-xl overflow-scroll"
               )}
               placeholder="Search by name..."
               maxLength={60}
@@ -160,7 +160,7 @@ export default async function MembersListPage({
               type="submit"
               className={clsx(
                 instrumentSans.className,
-                "p-2 text-dark-text rounded border border-light-grey text-sm"
+                "p-2 bg-dark-bg text-dark-text dark:bg-light-bg dark:text-light-text rounded border border-light-grey text-sm"
               )}
             >
               Apply
@@ -169,7 +169,7 @@ export default async function MembersListPage({
               href="/members"
               className={clsx(
                 instrumentSans.className,
-                "p-2 bg-light-bg text-light-text text-center rounded border border-dark-grey text-sm"
+                "p-2 text-light-text dark:text-dark-text text-center rounded border border-dark-grey text-sm"
               )}
             >
               Clear

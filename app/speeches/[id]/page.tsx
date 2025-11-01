@@ -53,10 +53,10 @@ export default async function SpeechPage({
       },
     },
   ];
-  const parts = (await db
+  const parts = await db
     .collection("parts")
     .aggregate<SpeechPartWithTalkerInfo>(pipeline)
-    .toArray());
+    .toArray();
 
   if (!parts.length) {
     return (
@@ -87,7 +87,7 @@ export default async function SpeechPage({
                 href="/speeches"
                 className={clsx(
                   instrumentSans.className,
-                  "flex text-xs hover:text-dark-text/80 transition"
+                  "flex text-xs hover:text-light-text/80 dark:hover:text-dark-text/80 transition"
                 )}
               >
                 Speeches
@@ -96,7 +96,7 @@ export default async function SpeechPage({
             <li className="flex">
               <ChevronRight12Filled />
             </li>
-            <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
+            <li className="text-xs text-light-text dark:text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
               <span className={clsx(instrumentSans.className)}>{title}</span>
             </li>
           </ol>

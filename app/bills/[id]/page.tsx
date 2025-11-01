@@ -75,7 +75,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
             href="/bills"
             className={clsx(
               instrumentSans.className,
-              "flex text-xs hover:text-dark-text/80 transition"
+              "flex text-xs hover:text-light-text/80 dark:hover:text-dark-text/80 transition"
             )}
           >
             Bills
@@ -83,7 +83,7 @@ export default async function BillPage({ params }: { params: { id: string } }) {
           <li className="flex">
             <ChevronRight12Filled />
           </li>
-          <li className="text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
+          <li className="text-light-text dark:text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
             {b0.subdebate_1_title}
           </li>
         </ol>

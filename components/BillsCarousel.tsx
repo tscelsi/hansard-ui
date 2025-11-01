@@ -16,7 +16,7 @@ const Strong = ({ children }: { children: React.ReactNode }) => (
 export const BillsCarousel = ({ data }: { data: BillDiscussionType[] }) => {
   const [emblaRef] = useEmblaCarousel();
   return (
-    <div className="embla bg-dark-bg overflow-hidden p-2" ref={emblaRef}>
+    <div className="embla overflow-hidden p-2" ref={emblaRef}>
       <div className="embla__container flex">
         {data.map((bill) => (
           <div

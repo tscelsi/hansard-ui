@@ -172,7 +172,7 @@ export default async function SpeechesPage({
     <div>
       <div>
         <ol className="border-b border-dark-grey py-2 px-2 flex items-center gap-1 text-gray-500">
-          <li className="text-xs text-dark-text text-nowrap overflow-hidden text-ellipsis">
+          <li className="text-xs text-light-text dark:text-dark-text text-nowrap overflow-hidden text-ellipsis">
             <span className={clsx(instrumentSans.className)}>Speeches</span>
           </li>
         </ol>
@@ -194,7 +194,7 @@ export default async function SpeechesPage({
               defaultValue={query}
               className={clsx(
                 instrumentSans.className,
-                "font-medium bg-dark-bg text-sm h-full focus:outline-none px-2 text-xl overflow-scroll"
+                "font-medium bg-light-bg dark:bg-dark-bg text-sm h-full focus:outline-none px-2 text-xl overflow-scroll"
               )}
               placeholder="Search..."
               maxLength={60}
@@ -250,7 +250,10 @@ export default async function SpeechesPage({
               name="from"
               type="date"
               defaultValue={from}
-              className={clsx(instrumentSans.className, "bg-dark-bg text-sm")}
+              className={clsx(
+                instrumentSans.className,
+                "bg-light-bg dark:bg-dark-bg text-sm"
+              )}
             />
           </div>
           <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px] flex-1">
@@ -262,7 +265,10 @@ export default async function SpeechesPage({
               name="to"
               type="date"
               defaultValue={to}
-              className={clsx(instrumentSans.className, "bg-dark-bg text-sm")}
+              className={clsx(
+                instrumentSans.className,
+                "bg-light-bg dark:bg-dark-bg text-sm"
+              )}
             />
           </div>
           <div className="border-b border-dark-grey h-[64px] flex-1 flex items-center p-2 gap-2 border-r">
@@ -270,7 +276,7 @@ export default async function SpeechesPage({
               type="submit"
               className={clsx(
                 instrumentSans.className,
-                "p-2 text-dark-text rounded border border-light-grey text-sm"
+                "p-2 bg-dark-bg text-dark-text dark:bg-light-bg dark:text-light-text rounded border border-light-grey text-sm"
               )}
             >
               Apply
@@ -279,7 +285,7 @@ export default async function SpeechesPage({
               href="/speeches"
               className={clsx(
                 instrumentSans.className,
-                "p-2 bg-light-bg text-light-text text-center rounded border border-dark-grey text-sm"
+                "p-2 text-light-text dark:text-dark-text text-center rounded border border-dark-grey text-sm"
               )}
             >
               Clear

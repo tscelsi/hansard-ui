@@ -7,7 +7,6 @@ type BadgeProps = {
   children: React.ReactNode;
   className?: string;
   title?: string;
-  dark?: boolean;
   onDismiss?: () => void;
 };
 
@@ -15,22 +14,14 @@ export default function Badge({
   children,
   className = "",
   title,
-  dark = true,
   onDismiss,
 }: BadgeProps) {
   const base =
-    "flex items-center gap-1 w-fit h-fit text-xs px-1 py-0.5 rounded-md border font-semibold border-gray-200";
-  const darkStyles = "text-dark-text bg-dark-bg";
-  const lightStyles = "text-light-text bg-light-bg";
+    "flex items-center gap-1 w-fit h-fit text-xs px-1 py-0.5 rounded-md border font-semibold border-light-grey dark:border-gray-200 dark:text-dark-text dark:bg-dark-bg text-light-text bg-light-bg";
   return (
     <span
       title={title}
-      className={clsx(
-        base,
-        instrumentSans.className,
-        className,
-        dark ? darkStyles : lightStyles
-      )}
+      className={clsx(base, instrumentSans.className, className)}
     >
       {children}
       {onDismiss && (
@@ -49,16 +40,10 @@ export default function Badge({
   );
 }
 
-export const HouseBadge = ({
-  house,
-}: {
-  house: "hor" | "senate";
-}) => {
+export const HouseBadge = ({ house }: { house: "hor" | "senate" }) => {
   return (
     <Badge
-      className={clsx(
-        house === "hor" ? "bg-green-900/70 text-white" : "bg-red-900/70 text-white"
-      )}
+      className={clsx(house === "hor" ? "bg-hor/70 dark:bg-hor/70" : "bg-senate/60 dark:bg-senate/60")}
     >
       {house === "hor" ? "House" : "Senate"}
     </Badge>
@@ -78,4 +63,4 @@ export const IconBadge = ({
       {children}
     </Badge>
   );
-}
+};

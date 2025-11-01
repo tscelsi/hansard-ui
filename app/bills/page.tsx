@@ -57,7 +57,7 @@ export default async function BillsPage() {
             instrumentSans.className
           )}
         >
-          <li className="text-gray-500 text-nowrap overflow-hidden text-ellipsis align-baseline">
+          <li className="text-light-text dark:text-dark-text text-nowrap overflow-hidden text-ellipsis align-baseline">
             Bills
           </li>
         </ol>
@@ -90,7 +90,7 @@ export default async function BillsPage() {
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <div className="flex items-center gap-1">
           <h2 className="text-2xl font-semibold">Divisiveness</h2>
-          <Tooltip trigger={<Info16Regular className="text-light-grey" />}>
+          <Tooltip trigger={<Info16Regular className="text-light-text dark:text-light-grey" />}>
             <p className={clsx(instrumentSans.className)}>
               Calculated based on an analysis of a speaker's sentiment and how
               often interjections occur in their speeches,{" "}

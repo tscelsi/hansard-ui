@@ -30,7 +30,7 @@ export const Accordion = (props: AccordionProps) => {
     <RadixAccordion.Root
       type={type}
       defaultValue={defaultValue}
-      className={clsx("w-full bg-dark-bg", className)}
+      className={clsx("w-full", className)}
     >
   {items.map((item: AccordionItem) => (
         <RadixAccordion.Item

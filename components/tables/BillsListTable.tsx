@@ -140,14 +140,14 @@ export const BillsListTable = ({ data }: { data: BillsListResult[] }) => {
       >
         <div>
           <button
-            className="px-2 py-1 border rounded disabled:opacity-50 mr-2"
+            className="px-2 py-1 border border-dark-grey rounded disabled:opacity-50 mr-2"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
             Previous
           </button>
           <button
-            className="px-2 py-1 border rounded disabled:opacity-50"
+            className="px-2 py-1 border border-dark-grey rounded disabled:opacity-50"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
@@ -162,7 +162,7 @@ export const BillsListTable = ({ data }: { data: BillsListResult[] }) => {
           <label className="flex gap-2 items-center">
             Rows per page
             <select
-              className="bg-dark-bg border rounded px-1 py-0.5"
+              className="bg-light-bg dark:bg-dark-bg border border-dark-grey rounded px-1 py-0.5"
               value={table.getState().pagination.pageSize}
               onChange={(e) => {
                 table.setPageSize(Number(e.target.value));

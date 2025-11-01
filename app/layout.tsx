@@ -3,6 +3,8 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { lora } from "./fonts";
 import { getDb } from "@/lib/mongodb";
+import clsx from "clsx";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "Augov Hansard Tool",
@@ -35,17 +37,32 @@ export default function RootLayout({
 }) {
   const filtersPromise = fetchFilters();
 
+
   return (
-    <html lang="en" className="dark text-[14px] h-full">
+    <html lang="en" className={clsx("text-[14px] h-full")}>
+      {/* Set initial theme before React hydration to avoid flash */}
+      <Script id="theme-init" strategy="beforeInteractive">
+        {`
+          try {
+            const stored = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const useDark = stored ? stored === 'dark' : prefersDark;
+            const root = document.documentElement;
+            if (useDark) root.classList.add('dark'); else root.classList.remove('dark');
+          } catch {}
+        `}
+      </Script>
       <body
-        className={`${lora.className} md:text-[18px] leading-7 text-dark-text bg-dark-bg h-full`}
+        className={`${lora.className} md:text-[18px] leading-7 bg-light-bg text-light-text dark:text-dark-text dark:bg-dark-bg h-full`}
       >
-        <header className="">
+        <header>
           <div className="container m-auto sm:border-x border-dark-grey">
-            <NavBar filtersPromise={filtersPromise} />
+            <NavBar />
           </div>
         </header>
-        <main className="container m-auto sm:border-x border-dark-grey min-h-[calc(100vh-48px)]">{children}</main>
+        <main className="container m-auto sm:border-x border-dark-grey min-h-[calc(100vh-48px)]">
+          {children}
+        </main>
       </body>
     </html>
   );
