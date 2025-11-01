@@ -17,7 +17,7 @@ export default function Badge({
   onDismiss,
 }: BadgeProps) {
   const base =
-    "flex items-center gap-1 w-fit h-fit text-xs px-1 py-0.5 rounded-md border font-semibold border-light-grey dark:border-gray-200 dark:text-dark-text dark:bg-dark-bg text-light-text bg-light-bg";
+    "flex items-center gap-1 w-fit h-fit text-xs px-1 py-0.5 rounded-md border font-semibold border-light-grey dark:border-gray-200";
   return (
     <span
       title={title}
