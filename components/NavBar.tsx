@@ -3,6 +3,7 @@ import Link from "next/link";
 import React from "react";
 import { DarkTheme20Filled, List24Filled } from "@fluentui/react-icons";
 import clsx from "clsx";
+import { useTheme } from "next-themes";
 
 type MenuItemProps = {
   children?: React.ReactNode;
@@ -21,31 +22,14 @@ const MenuItem = ({ children, className, ...rest }: MenuItemProps) => {
 };
 
 export default function NavBar() {
+  const { theme, setTheme } = useTheme();
   const [filterOpen, setFilterOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
-  const [isDark, setIsDark] = React.useState<boolean>(false);
-
-  // Initialize theme from localStorage or system preference
-  React.useEffect(() => {
-    try {
-      const stored = localStorage.getItem("theme");
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const useDark = stored ? stored === "dark" : prefersDark;
-      document.documentElement.classList.toggle("dark", useDark);
-      setIsDark(useDark);
-    } catch {
-      // no-op
-    }
-  }, []);
 
   const toggleTheme = () => {
-    setIsDark((prev) => {
-      const next = !prev;
-      document.documentElement.classList.toggle("dark", next);
-      try {
-        localStorage.setItem("theme", next ? "dark" : "light");
-      } catch {}
-      return next;
+    setTheme((prevTheme) => {
+      const nextTheme = prevTheme === "dark" ? "light" : "dark";
+      return nextTheme;
     });
   };
   return (
@@ -68,14 +52,16 @@ export default function NavBar() {
           <button
             type="button"
             aria-label="Toggle theme"
-            aria-pressed={isDark}
+            aria-pressed={theme === "darK"}
             onClick={toggleTheme}
             className={clsx(
               "flex items-center rounded-full transition",
               "hover:bg-light-grey/60",
-              isDark ? "text-dark-text" : "text-light-text"
+              theme === "dark" ? "text-dark-text" : "text-light-text"
             )}
-            title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            title={
+              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+            }
           >
             <DarkTheme20Filled />
           </button>
