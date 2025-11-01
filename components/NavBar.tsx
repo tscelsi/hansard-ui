@@ -55,9 +55,8 @@ export default function NavBar() {
             aria-pressed={theme === "darK"}
             onClick={toggleTheme}
             className={clsx(
-              "flex items-center rounded-full transition",
-              "hover:bg-light-grey/60",
-              theme === "dark" ? "text-dark-text" : "text-light-text"
+              "flex items-center rounded-full transition dark:text-dark-text text-light-text",
+              "hover:bg-light-grey/60"
             )}
             title={
               theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
