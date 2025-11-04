@@ -15,7 +15,7 @@ import clsx from "clsx";
 import Accordion from "components/Accordion";
 import Badge, { HouseBadge } from "components/Badge";
 import { BillListItem } from "components/BillListItem";
-import { BillSentimentChart } from "components/charts/sentimentChart";
+import { BillSentimentChart } from "components/charts/billSentimentChart";
 import {
   PartySpeechProportionChart,
   SpeechCountOverTimeByPartChart,

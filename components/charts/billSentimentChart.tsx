@@ -2,13 +2,8 @@
 
 import { SentimentResult } from "@/lib/queries";
 import { getSpeechTonePositivity, Tone } from "@/lib/speech_tone";
-import {
-  Circle12Filled,
-  Circle16Filled,
-  Location12Filled,
-} from "@fluentui/react-icons";
+import { Location12Filled } from "@fluentui/react-icons";
 import { instrumentSans, lora } from "app/fonts";
-import * as Popover from "@radix-ui/react-popover";
 import clsx from "clsx";
 import Badge, { HouseBadge, IconBadge } from "components/Badge";
 import {
@@ -20,6 +15,7 @@ import {
   ResponsiveContainer,
   Label,
   Cell,
+  ZAxis,
 } from "recharts";
 import { SentimentGroupByType } from "app/bills/details/[id]/page";
 
@@ -36,6 +32,7 @@ const colourMap: Record<string, string> = {
 
 type SentimentResultWithToneValue = {
   tone_value: number;
+  count?: number;
 } & SentimentResult;
 
 const formatData = (
@@ -96,6 +93,7 @@ const formatData = (
           stance: m.stance_sum / m.count,
           tone: [],
           tone_value: avgTone,
+          count: m.count,
         };
       })
       .filter((d) => isFiniteNumber(d.tone_value));
@@ -140,6 +138,7 @@ const formatData = (
           stance: p.stance_sum / p.count,
           tone: [],
           tone_value: avgTone,
+          count: p.count,
         };
       })
       .filter((d) => isFiniteNumber(d.tone_value));
@@ -196,6 +195,14 @@ export const BillSentimentChart = ({
               domain={[-1, 1]}
               hide
             />
+            {(groupBy === "party" || groupBy === "member") && (
+              <ZAxis
+                type="number"
+                dataKey="count"
+                domain={["dataMin", "dataMax"]}
+                range={[60, 240]} // pixel size of circles (min/max)
+              />
+            )}
             <Scatter name="sentiment" data={formattedData}>
               {formattedData.map((entry, index) => (
                 <Cell
@@ -247,6 +254,9 @@ export const BillSentimentChart = ({
                       <span>
                         Tone: <strong>{data.tone_value.toFixed(2)}</strong>
                       </span>
+                      {groupBy !== "speech" && <span>
+                        Count: <strong>{data.count}</strong>
+                      </span>}
                     </div>
                   </div>
                 );
