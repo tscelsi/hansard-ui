@@ -100,7 +100,7 @@ export default async function BillPage({
           )}
         >
           <Link
-            href="/bills"
+            href="/bills/summary"
             className={clsx(
               instrumentSans.className,
               "flex text-xs hover:text-light-text/80 dark:hover:text-dark-text/80 transition"
