@@ -2,7 +2,7 @@
 
 import { ChevronDown12Regular } from "@fluentui/react-icons";
 import * as Select from "@radix-ui/react-select";
-import { SentimentGroupByType } from "app/bills/[id]/page";
+import { SentimentGroupByType } from "app/bills/details/[id]/page";
 import { instrumentSans, lora } from "app/fonts";
 import clsx from "clsx";
 import { Route } from "next";

@@ -75,7 +75,7 @@ export default function NavBar() {
             <Link href="/speeches">Speeches</Link>
           </li>
           <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:bg-dark-bg/10">
-            <Link href="/bills">Bills</Link>
+            <Link href="/bills/summary">Bills</Link>
           </li>
         </ol>
       )}

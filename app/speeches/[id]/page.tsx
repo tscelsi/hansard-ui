@@ -107,7 +107,7 @@ export default async function SpeechPage({
             <p className="font-medium">{p0.talker_name}</p>
             {p0.bill_ids && p0.bill_ids.length > 0 && (
               <Link
-                href={`/bills/${encodeURIComponent(p0.bill_ids[0])}`}
+                href={`/bills/details/${encodeURIComponent(p0.bill_ids[0])}`}
                 className="flex gap-1 text-link-blue hover:underline hover:cursor-pointer"
               >
                 <span className="text-xs">Go to bill</span>

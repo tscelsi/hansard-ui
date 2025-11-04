@@ -26,7 +26,7 @@ const columns = [
       const bill = row.original;
       return (
         <Link
-          href={`/bills/${encodeURIComponent(bill.id)}`}
+          href={`/bills/details/${encodeURIComponent(bill.id)}`}
           className="hover:underline"
         >
           <div className="flex flex-col gap-1 w-full">

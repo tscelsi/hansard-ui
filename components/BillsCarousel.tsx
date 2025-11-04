@@ -23,7 +23,7 @@ export const BillsCarousel = ({ data }: { data: BillDiscussionType[] }) => {
             key={bill.bill_id}
             className="flex flex-col gap-1 border border-dark-grey rounded-md p-2 min-w-0 flex-[0_0_80%] sm:flex-[0_0_50%] md:flex-[0_0_33%] mr-2 embla__slide"
           >
-            <Link href={`/bills/${encodeURIComponent(bill.bill_id)}`}>
+            <Link href={`/bills/details/${encodeURIComponent(bill.bill_id)}`}>
               <h5 className="text-lg font-semibold hover:underline truncate">
                 {bill.bill_title.slice(0, 80)}
                 {bill.bill_title.length > 80 ? "…" : ""}

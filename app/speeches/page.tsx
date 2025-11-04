@@ -276,6 +276,7 @@ export default async function SpeechesPage({
           </div>
         </form>
       </div>
+      <div className="border-b border-dark-grey">
       {summaries.length > 0 ? (
         <SpeechesTable
           data={summaries}
@@ -288,6 +289,7 @@ export default async function SpeechesPage({
           No speeches found for current filters.
         </p>
       )}
+      </div>
     </div>
   );
 }

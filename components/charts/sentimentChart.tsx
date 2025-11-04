@@ -21,7 +21,7 @@ import {
   Label,
   Cell,
 } from "recharts";
-import { SentimentGroupByType } from "app/bills/[id]/page";
+import { SentimentGroupByType } from "app/bills/details/[id]/page";
 
 const colourMap: Record<string, string> = {
   LNP: "#1E1B56",

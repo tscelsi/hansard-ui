@@ -31,7 +31,7 @@ export default async function HomePage({}: {}) {
           <Link className="text-link-blue hover:underline" href="/speeches">
             <h2>{">"} Speeches</h2>
           </Link>
-          <Link className="text-link-blue hover:underline" href="/bills">
+          <Link className="text-link-blue hover:underline" href="/bills/summary">
             <h2>{">"} Bills</h2>
           </Link>
         </div>
