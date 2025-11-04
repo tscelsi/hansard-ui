@@ -275,11 +275,15 @@ export const speechesOverTime = async (db: Db, bill_id: string) => {
   const existingDates = new Set(
     result.map((r) => r.date.toISOString().split("T")[0])
   );
-  for (const date of latestSittingDays) {
-    const dateStr = date.toISOString().split("T")[0];
+  const today = new Date();
+  const accumulator = new Date();
+  accumulator.setDate(today.getDate() - 18);
+  while (accumulator <= today) {
+    const dateStr = accumulator.toISOString().split("T")[0];
     if (!existingDates.has(dateStr)) {
-      result.push({ date, hor: 0, senate: 0 });
+      result.push({ date: new Date(dateStr), hor: 0, senate: 0 });
     }
+    accumulator.setDate(accumulator.getDate() + 1);
   }
   // sort by date ascending
   result.sort((a, b) => a.date.getTime() - b.date.getTime());

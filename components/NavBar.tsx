@@ -4,6 +4,7 @@ import React from "react";
 import { DarkTheme20Filled, List24Filled } from "@fluentui/react-icons";
 import clsx from "clsx";
 import { useTheme } from "next-themes";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
 type MenuItemProps = {
   children?: React.ReactNode;
@@ -23,7 +24,6 @@ const MenuItem = ({ children, className, ...rest }: MenuItemProps) => {
 
 export default function NavBar() {
   const { theme, setTheme } = useTheme();
-  const [filterOpen, setFilterOpen] = React.useState(false);
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   const toggleTheme = () => {
@@ -35,19 +35,47 @@ export default function NavBar() {
   return (
     <>
       <div className="flex h-[48px] border-b border-dark-grey">
-        <MenuItem
-          className={clsx(
-            menuOpen &&
-              "dark:bg-light-bg dark:text-light-text bg-dark-bg text-dark-text",
-            !menuOpen && "border-r border-dark-grey"
-          )}
-          onClick={() => {
-            setMenuOpen((v) => !v);
-            if (filterOpen) setFilterOpen(false);
-          }}
-        >
-          <List24Filled />
-        </MenuItem>
+        <DropdownMenu.Root open={menuOpen} onOpenChange={setMenuOpen}>
+          <DropdownMenu.Trigger asChild>
+            <button
+              className={clsx(
+                menuOpen &&
+                  "dark:bg-light-bg dark:text-light-text bg-dark-bg text-dark-text",
+                !menuOpen && "border-r border-dark-grey",
+                "w-[48px]"
+              )}
+            >
+              <List24Filled />
+            </button>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Portal>
+            <DropdownMenu.Content
+              align="start"
+              className="rounded-b-sm rounded-tr-sm shadow-sm z-10 absolute dark:bg-light-bg dark:text-light-text bg-dark-bg text-dark-text h-fit text-2xl font-medium"
+            >
+              <div className="container w-screen">
+                <DropdownMenu.Item
+                  onClick={() => setMenuOpen(false)}
+                  className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:opacity-90 dark:hover:bg-dark-bg/10"
+                >
+                  <Link href={"/members"}>Members</Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() => setMenuOpen(false)}
+                  className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:opacity-90 dark:hover:bg-dark-bg/10"
+                >
+                  <Link href="/speeches">Speeches</Link>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item
+                  onClick={() => setMenuOpen(false)}
+                  className="transition flex items-center h-[48px] p-2 hover:cursor-pointer hover:opacity-90 dark:hover:bg-dark-bg/10"
+                >
+                  <Link href="/bills/summary">Bills</Link>
+                </DropdownMenu.Item>
+              </div>
+            </DropdownMenu.Content>
+          </DropdownMenu.Portal>
+        </DropdownMenu.Root>
         <div className="flex flex-1 gap-2 items-center justify-end text-3xl p-2">
           <button
             type="button"
@@ -66,19 +94,6 @@ export default function NavBar() {
           </Link>
         </div>
       </div>
-      {menuOpen && (
-        <ol className="z-10 absolute dark:bg-light-bg dark:text-light-text bg-dark-bg text-dark-text w-full h-fit text-2xl font-medium">
-          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:bg-dark-bg/10">
-            <Link href={"/members"}>Members</Link>
-          </li>
-          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:bg-dark-bg/10">
-            <Link href="/speeches">Speeches</Link>
-          </li>
-          <li className="transition flex items-center h-[48px] p-2 border-b border-dark-grey hover:cursor-pointer hover:bg-dark-bg/10">
-            <Link href="/bills/summary">Bills</Link>
-          </li>
-        </ol>
-      )}
     </>
   );
 }

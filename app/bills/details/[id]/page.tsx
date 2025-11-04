@@ -135,8 +135,8 @@ export default async function BillPage({
         <p
           className={clsx("text-sm text-light-grey", instrumentSans.className)}
         >
-          Speech counts over the last 18 sitting sessions, and any time this
-          year that speeches were given.
+          Speech counts over the last 18 days, as well as any time speeches were given
+          during the lifetime of the bill.
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
