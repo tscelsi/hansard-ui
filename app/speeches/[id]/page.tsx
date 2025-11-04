@@ -2,7 +2,7 @@ import { getDb } from "@/lib/mongodb";
 import type { SpeechPartWithTalkerInfo } from "@/types/index";
 import Badge from "components/Badge";
 import clsx from "clsx";
-import { formatDateString } from "@/lib/date";
+import { formatDate, formatDateString } from "@/lib/date";
 import {
   ArrowUpRight12Filled,
   ChevronRight12Filled,
@@ -69,6 +69,7 @@ export default async function SpeechPage({
   }
 
   const p0 = parts[0];
+  console.log(p0);
   const title = p0?.subdebate_1_title || "Speech";
   const subdebateTitle = p0?.subdebate_2_title || "";
 
@@ -120,7 +121,7 @@ export default async function SpeechPage({
             {p0.subdebate_2_info && <p>{p0.subdebate_2_info}</p>}
           </div>
           <span className={clsx("text-sm mt-2", instrumentSans.className)}>
-            {formatDateString(p0.date)}
+            {formatDate(p0.date)}
           </span>
         </div>
       </div>
