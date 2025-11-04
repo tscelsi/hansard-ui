@@ -2,8 +2,10 @@ import NavBar from "components/NavBar";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import type { Metadata } from "next";
-import { lora } from "./fonts";
+import { instrumentSans, lora } from "./fonts";
 import clsx from "clsx";
+import Link from "next/link";
+import { ArrowUpRight12Filled } from "@fluentui/react-icons";
 
 export const metadata: Metadata = {
   title: "Augov Hansard Tool",
@@ -34,6 +36,24 @@ export default function RootLayout({
             <main className="container m-auto sm:border-x border-dark-grey min-h-[calc(100vh-48px)]">
               {children}
             </main>
+            <footer
+              className={clsx(
+                instrumentSans.className,
+                "h-[48px] flex justify-between items-center px-4 text-sm"
+              )}
+            >
+              <div className={clsx("dark:text-dark-grey text-light-grey")}>
+                made by tom.s © {new Date().getFullYear()}
+              </div>
+              <a
+                href="https://my-blog-psi-opal.vercel.app/public/ddcfafb2-34a3-47a8-868b-f58e287ebd0a"
+                className="flex gap-1 items-center hover:underline hover:opacity-70 transition text-link-blue"
+                target="_blank"
+              >
+                get in touch
+                <ArrowUpRight12Filled />
+              </a>
+            </footer>
           </div>
         </ThemeProvider>
       </body>
