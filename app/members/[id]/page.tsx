@@ -145,7 +145,9 @@ export default async function MemberPage({
           <span className="font-medium">Party:</span>{" "}
           {talker.party || "Unknown"} |{" "}
           <span className="font-medium">Electorate:</span>{" "}
-          {talker.electorate || "Unknown"}
+          {talker.electorate || "Unknown"} |{" "}
+          <span className="font-medium">Divisiveness:</span>{" "}
+          {talker.divisiveness?.toFixed(3) || "N/A"}
         </h2>
       </div>
       <div className="flex">

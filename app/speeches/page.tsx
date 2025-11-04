@@ -1,31 +1,10 @@
 import { getDb } from "@/lib/mongodb";
-import { SpeechPartWithTalkerInfo, Talker } from "@/types/index";
+import { SpeechPartWithTalkerInfo } from "@/types/index";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
 import MultiSelect from "components/MultiSelect";
-import { SpeechListItem } from "components/SpeechListItem";
 import { SpeechesTable } from "components/tables/SpeechesTable";
-import * as Accordion from "@radix-ui/react-accordion";
 import Link from "next/link";
-import {
-  ChevronDown12Filled,
-  Filter12Filled,
-  Filter16Filled,
-  Filter20Filled,
-} from "@fluentui/react-icons";
-
-type SpeechListItemType = {
-  speech_id: string;
-  date: string;
-  debate_category: string;
-  subdebate_1_title: string;
-  bill_ids: string[] | null;
-  house: "hor" | "senate";
-  speech_part_type: "interjection" | "continuation" | "speech";
-  first_content: string;
-  main_talker_id: string;
-  talker_ids: string[];
-};
 
 const toArr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? (v.filter(Boolean) as string[]) : v ? [v] : [];
@@ -127,6 +106,10 @@ export default async function SpeechesPage({
     {
       $sort: {
         date: -1,
+        debate_seq: 1,
+        subdebate_1_seq: 1,
+        subdebate_2_seq: 1,
+        speech_seq: 1,
       },
     },
   ];

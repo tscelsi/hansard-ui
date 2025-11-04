@@ -3,13 +3,15 @@ export type Talker = {
   name: string;
   electorate: string;
   party: string;
+  divisiveness: number;
+  bill_divisiveness: number;
 };
 
 type ChamberType = "main" | "federation" | "unknown";
 
 export type Part = {
   id: string;
-  date: string; // ISO string
+  date: Date; // ISO string
   house: "hor" | "senate";
   bill_ids?: string[] | null;
   chamber: ChamberType;
@@ -22,6 +24,8 @@ export type Part = {
   subdebate_2_title: string | null;
   subdebate_2_info: string | null;
   subdebate_2_seq: number | null;
+  stance_thinking: string;
+  stance_value: number | null;
 };
 
 export type SpeechPartType = "interjection" | "continuation" | "speech";

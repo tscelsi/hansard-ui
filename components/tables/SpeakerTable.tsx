@@ -46,6 +46,22 @@ const columns = [
     cell: (info) => info.getValue(),
     sortingFn: "alphanumeric",
   }),
+  columnHelper.accessor("stance_value", {
+    header: "Position",
+    cell: (info) => {
+      const val = info.getValue();
+      if (val === null || val === undefined) {
+        return "N/A";
+      } else if (val > 0.7) {
+        return "Supportive";
+      } else if (val < 0.3) {
+        return "Opposed";
+      } else {
+        return "Neutral";
+      }
+    },
+    sortingFn: "alphanumeric",
+  }),
 ];
 
 const LinkCell = ({
@@ -119,7 +135,7 @@ export const SpeakerTable = ({ data }: { data: SpeakersResult[] }) => {
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="w-1/3 whitespace-nowrap px-1 py-2 overflow-hidden text-ellipsis"
+                  className={clsx("whitespace-nowrap px-1 py-2 overflow-hidden text-ellipsis")}
                   style={{ maxWidth: 0 }}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

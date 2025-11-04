@@ -58,9 +58,6 @@ export default function NavBar() {
               "flex items-center rounded-full transition dark:text-dark-text text-light-text",
               "hover:bg-light-grey/60"
             )}
-            title={
-              theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
-            }
           >
             <DarkTheme20Filled />
           </button>

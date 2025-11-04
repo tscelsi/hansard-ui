@@ -1,5 +1,6 @@
 import { Db } from "mongodb";
 import { SpeechPartWithTalkerInfo } from "../types";
+import { Tone } from "./speech_tone";
 
 export type PartySpeechCountsResult = {
   party: string;
@@ -64,6 +65,8 @@ export type SpeakersResult = {
   party: string;
   count: number;
   house: "hor" | "senate";
+  stance_value: number | null;
+  stance_thinking: string;
 };
 
 export const topSpeakers = (db: Db, bill_id: string) =>
@@ -83,6 +86,8 @@ export const topSpeakers = (db: Db, bill_id: string) =>
             $sum: 1,
           },
           house: { $first: "$house" },
+          stance_value: { $first: "$stance_value" },
+          stance_thinking: { $first: "$stance_thinking" },
         },
       },
       {
@@ -96,11 +101,14 @@ export const topSpeakers = (db: Db, bill_id: string) =>
       { $unwind: "$talker_info" },
       {
         $project: {
+          _id: 0,
           id: "$_id",
           name: "$talker_info.name",
           party: "$talker_info.party",
           count: "$speech_count",
           house: 1,
+          stance_value: 1,
+          stance_thinking: 1,
         },
       },
       {
@@ -278,3 +286,75 @@ export const speechesOverTime = async (db: Db, bill_id: string) => {
 
   return result;
 };
+
+export type SentimentResult = {
+  talker_id: string;
+  speech_id: string;
+  name: string;
+  party: string;
+  electorate: string;
+  house: "hor" | "senate";
+  stance: number;
+  tone: Tone[];
+};
+
+export const sentiment = (db: Db, bill_id: string) =>
+  db
+    .collection("parts")
+    .aggregate<SentimentResult>([
+      {
+        $match: {
+          bill_ids: bill_id,
+          speech_seq: 0,
+        },
+      },
+      {
+        $sort: {
+          date: 1,
+          debate_seq: 1,
+          subdebate_1_seq: 1,
+          subdebate_2_seq: 1,
+          speech_seq: 1,
+        },
+      },
+      {
+        $lookup: {
+          from: "talkers",
+          localField: "talker_id",
+          foreignField: "id",
+          as: "talker_info",
+        },
+      },
+      {
+        $lookup: {
+          from: "speech_stats",
+          localField: "speech_id",
+          foreignField: "id",
+          as: "speech_stats",
+        },
+      },
+      {
+        $unwind: {
+          path: "$talker_info",
+        },
+      },
+      {
+        $unwind: {
+          path: "$speech_stats",
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          talker_id: 1,
+          speech_id: 1,
+          name: "$talker_info.name",
+          party: "$talker_info.party",
+          electorate: "$talker_info.electorate",
+          house: 1,
+          stance: "$speech_stats.stance",
+          tone: "$speech_stats.tone",
+        },
+      },
+    ])
+    .toArray();

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
   darkMode: "selector",
@@ -15,6 +16,7 @@ export default {
         "dark-bg": "#120E17",
         "dark-grey": "#39373A",
         "light-grey": "#7D797F",
+        "very-light-grey": "#CACACA",
         "link-blue": "#527AFF",
         ALP: "#6C242A",
         LP: "#1E1B56",
@@ -23,5 +25,11 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [plugin(function ({ addUtilities }) {
+      addUtilities({
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/writing-mode
+        ".sideways-writing-lr": { "writing-mode": "sideways-lr" },
+      })
+    }),
+],
 } satisfies Config;

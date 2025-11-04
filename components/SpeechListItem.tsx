@@ -1,9 +1,9 @@
-import { formatDateString } from "@/lib/date";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
 import Badge, { HouseBadge, IconBadge } from "./Badge";
 import { Location12Regular } from "@fluentui/react-icons";
 import { SpeechPartType } from "../types";
+import { formatDate } from "@/lib/date";
 
 export const SpeechListItem = ({
   title,
@@ -24,7 +24,7 @@ export const SpeechListItem = ({
   content: string;
   electorate?: string;
   type?: SpeechPartType;
-  date?: string;
+  date?: Date;
 }) => {
   const snippet = content.substring(0, 120);
   return (
@@ -60,7 +60,7 @@ export const SpeechListItem = ({
             instrumentSans.className
           )}
         >
-          {formatDateString(date)}
+          {formatDate(date)}
         </span>
       )}
     </div>

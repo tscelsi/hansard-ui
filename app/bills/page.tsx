@@ -1,24 +1,20 @@
 import {
   bill_discussion,
   bills_list,
-  BillsListResult,
   divisiveness,
   partySpeechProportions,
   speakers,
 } from "@/lib/bills_queries";
-import { formatDate } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
-import { Info12Regular, Info16Regular } from "@fluentui/react-icons";
+import { Info16Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
-import { BillListItem } from "components/BillListItem";
 import { BillsCarousel } from "components/BillsCarousel";
 import { PartySpeechProportionChart } from "components/charts/speechCountOverTime";
 import { BillsListTable } from "components/tables/BillsListTable";
 import { DivisivenessTable } from "components/tables/DivisivenessTable";
 import { SpeakerTable } from "components/tables/SpeakerTable";
 import Tooltip from "components/Tooltip";
-import Link from "next/link";
 
 // Quick and simple Bill type
 interface Bill {
