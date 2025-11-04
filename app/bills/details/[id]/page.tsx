@@ -164,7 +164,7 @@ export default async function BillPage({
                   <strong>
                     <em>Stance</em>
                   </strong>{" "}
-                  is a number between -1 and 1. It measures support toward the
+                  (x-axis) is a number between -1 and 1. It measures support toward the
                   bill under discussion. Complete support receives a value of 1
                   and being completely against -1.
                 </span>
@@ -173,7 +173,7 @@ export default async function BillPage({
                   <strong>
                     <em>Tone</em>
                   </strong>{" "}
-                  is a number between 0 and 1. It is a measure of the positive
+                  (y-axis) is a number between 0 and 1. It is a measure of the positive
                   language used in speeches. Very positive language is scored 1
                   and very negative and aggressive language is scored 0.
                 </span>
