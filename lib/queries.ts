@@ -362,3 +362,200 @@ export const sentiment = (db: Db, bill_id: string) =>
       },
     ])
     .toArray();
+
+// Combined fetch to reduce round-trips using a single aggregation with $facet
+type PartyCount = { party: string; count: number };
+type OverTimeRow = { date: Date; hor?: number; senate?: number };
+type TopSpeakerRow = SpeakersResult;
+type SpeechListRow = { _id: Date; parts: SpeechPartWithTalkerInfo[] };
+type SentimentRow = SentimentResult;
+
+export type BillOverview = {
+  partySpeechProportions: PartySpeechProportionsResult;
+  speechesOverTime: OverTimeRow[];
+  topSpeakers: TopSpeakerRow[];
+  speechList: SpeechListRow[];
+  sentiment: SentimentRow[];
+};
+
+export async function billOverview(db: Db, bill_id: string): Promise<BillOverview> {
+  const [res] = await db
+    .collection("parts")
+    .aggregate<{
+      partyCounts: PartyCount[];
+      topSpeakers: TopSpeakerRow[];
+      overTime: OverTimeRow[];
+      speechList: SpeechListRow[];
+      sentiment: SentimentRow[];
+    }>([
+      {
+        $match: {
+          bill_ids: bill_id,
+        },
+      },
+      {
+        $facet: {
+          partyCounts: [
+            { $match: { speech_seq: 0 } },
+            {
+              $lookup: {
+                from: "talkers",
+                localField: "talker_id",
+                foreignField: "id",
+                as: "talker_info",
+              },
+            },
+            { $unwind: "$talker_info" },
+            {
+              $group: {
+                _id: "$talker_info.party",
+                count: { $sum: 1 },
+              },
+            },
+            { $project: { _id: 0, party: "$_id", count: 1 } },
+            { $sort: { count: -1 } },
+          ],
+          topSpeakers: [
+            { $match: { speech_seq: 0 } },
+            {
+              $group: {
+                _id: "$talker_id",
+                speech_count: { $sum: 1 },
+                house: { $first: "$house" },
+                stance_value: { $first: "$stance_value" },
+                stance_thinking: { $first: "$stance_thinking" },
+              },
+            },
+            {
+              $lookup: {
+                from: "talkers",
+                localField: "_id",
+                foreignField: "id",
+                as: "talker_info",
+              },
+            },
+            { $unwind: "$talker_info" },
+            {
+              $project: {
+                _id: 0,
+                id: "$_id",
+                name: "$talker_info.name",
+                party: "$talker_info.party",
+                count: "$speech_count",
+                house: 1,
+                stance_value: 1,
+                stance_thinking: 1,
+              },
+            },
+            { $sort: { count: -1, name: 1 } },
+          ],
+          overTime: [
+            { $match: { speech_seq: 0 } },
+            {
+              $group: {
+                _id: { date: "$date", house: "$house" },
+                count: { $sum: 1 },
+              },
+            },
+            {
+              $group: {
+                _id: "$_id.date",
+                counts: { $push: { k: "$_id.house", v: "$count" } },
+              },
+            },
+            { $project: { _id: 0, date: "$_id", counts: 1 } },
+            { $addFields: { countsObj: { $arrayToObject: "$counts" } } },
+            { $project: { date: 1, hor: "$countsObj.hor", senate: "$countsObj.senate" } },
+          ],
+          speechList: [
+            { $match: { $or: [{ speech_seq: 0 }, { type: "first_reading" }] } },
+            { $sort: { date: 1, debate_seq: 1, subdebate_1_seq: 1, subdebate_2_seq: 1, speech_seq: 1 } },
+            {
+              $lookup: {
+                from: "talkers",
+                localField: "talker_id",
+                foreignField: "id",
+                as: "talker_info",
+              },
+            },
+            {
+              $addFields: {
+                talker_name: { $ifNull: [{ $arrayElemAt: ["$talker_info.name", 0] }, null] },
+                talker_party: { $ifNull: [{ $arrayElemAt: ["$talker_info.party", 0] }, null] },
+                talker_electorate: { $ifNull: [{ $arrayElemAt: ["$talker_info.electorate", 0] }, null] },
+              },
+            },
+            { $project: { talker_info: 0 } },
+            { $group: { _id: "$date", parts: { $push: "$$ROOT" } } },
+            { $sort: { _id: -1 } },
+          ],
+          sentiment: [
+            { $match: { speech_seq: 0 } },
+            { $sort: { date: 1, debate_seq: 1, subdebate_1_seq: 1, subdebate_2_seq: 1, speech_seq: 1 } },
+            {
+              $lookup: {
+                from: "talkers",
+                localField: "talker_id",
+                foreignField: "id",
+                as: "talker_info",
+              },
+            },
+            { $unwind: { path: "$talker_info" } },
+            {
+              $lookup: {
+                from: "speech_stats",
+                localField: "speech_id",
+                foreignField: "id",
+                as: "speech_stats",
+              },
+            },
+            { $unwind: { path: "$speech_stats" } },
+            {
+              $project: {
+                _id: 0,
+                talker_id: 1,
+                speech_id: 1,
+                name: "$talker_info.name",
+                party: "$talker_info.party",
+                electorate: "$talker_info.electorate",
+                house: 1,
+                stance: "$speech_stats.stance",
+                tone: "$speech_stats.tone",
+              },
+            },
+          ],
+        },
+      },
+    ])
+    .toArray();
+
+  const partySpeechProportions: PartySpeechProportionsResult = (() => {
+    const counts = res?.partyCounts ?? [];
+    const total = counts.reduce((s, r) => s + r.count, 0);
+    return counts.reduce((acc, r) => {
+      acc[r.party] = total ? parseFloat(((r.count / total) * 100).toFixed(2)) : 0;
+      return acc;
+    }, {} as PartySpeechProportionsResult);
+  })();
+
+  // Fill missing dates (last 18 days) for overTime
+  const overTime = (res?.overTime ?? []).slice();
+  const existing = new Set(overTime.map((r) => r.date.toISOString().split("T")[0]));
+  const today = new Date();
+  const acc = new Date();
+  acc.setDate(today.getDate() - 18);
+  while (acc <= today) {
+    const ds = acc.toISOString().split("T")[0];
+    if (!existing.has(ds)) overTime.push({ date: new Date(ds), hor: 0, senate: 0 });
+    acc.setDate(acc.getDate() + 1);
+  }
+  overTime.sort((a, b) => a.date.getTime() - b.date.getTime());
+
+  return {
+    partySpeechProportions,
+    speechesOverTime: overTime,
+    topSpeakers: res?.topSpeakers ?? [],
+    speechList: res?.speechList ?? [],
+    sentiment: res?.sentiment ?? [],
+  };
+}

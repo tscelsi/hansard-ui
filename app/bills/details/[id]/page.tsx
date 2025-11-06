@@ -1,14 +1,6 @@
 import { formatDate } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
-import {
-  partySpeechCounts,
-  PartySpeechProportionsResult,
-  sentiment,
-  speechesOverTime,
-  speechList,
-  topSpeakers,
-} from "@/lib/queries";
-import * as Popover from "@radix-ui/react-popover";
+import { billOverview } from "@/lib/queries";
 import { ChevronRight12Filled, Info16Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
@@ -49,19 +41,13 @@ export default async function BillPage({
   const sentimentGroupBy = castToSentimentGroupByValue(
     toStr(searchParams.sentimentGroupBy)
   );
-  const [
+  const {
     partySpeechProportions,
-    speechesOverTimeResult,
-    topSpeakersResult,
-    speechListResult,
-    sentimentResult,
-  ] = await Promise.all([
-    partySpeechCounts(db, billId),
-    speechesOverTime(db, billId),
-    topSpeakers(db, billId),
-    speechList(db, billId),
-    sentiment(db, billId),
-  ]);
+    speechesOverTime: speechesOverTimeResult,
+    topSpeakers: topSpeakersResult,
+    speechList: speechListResult,
+    sentiment: sentimentResult,
+  } = await billOverview(db, billId);
 
   if (!speechListResult.length) {
     return (
