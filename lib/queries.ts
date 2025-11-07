@@ -16,7 +16,7 @@ export const partySpeechCounts = async (db: Db, bill_id: string) => {
       {
         $match: {
           bill_ids: bill_id,
-          speech_seq: 0,
+          part_seq: 0,
         },
       },
       {
@@ -65,8 +65,6 @@ export type SpeakersResult = {
   party: string;
   count: number;
   house: "hor" | "senate";
-  stance_value: number | null;
-  stance_thinking: string;
 };
 
 export const topSpeakers = (db: Db, bill_id: string) =>
@@ -76,7 +74,7 @@ export const topSpeakers = (db: Db, bill_id: string) =>
       {
         $match: {
           bill_ids: bill_id,
-          speech_seq: 0,
+          part_seq: 0,
         },
       },
       {
@@ -127,7 +125,7 @@ export const speechList = (db: Db, bill_id: string) =>
       {
         $match: {
           bill_ids: bill_id,
-          $or: [{ speech_seq: 0 }, { type: "first_reading" }],
+          $or: [{ part_seq: 0 }, { type: "first_reading" }],
         },
       },
       {
@@ -137,6 +135,7 @@ export const speechList = (db: Db, bill_id: string) =>
           subdebate_1_seq: 1,
           subdebate_2_seq: 1,
           speech_seq: 1,
+          part_seq: 1,
         },
       },
       {
@@ -227,7 +226,7 @@ export const speechesOverTime = async (db: Db, bill_id: string) => {
   const result = await db
     .collection("parts")
     .aggregate<{ date: Date; hor?: number; senate?: number }>([
-      { $match: { bill_ids: bill_id, speech_seq: 0 } },
+      { $match: { bill_ids: bill_id, part_seq: 0 } },
       {
         $group: {
           _id: {
@@ -309,7 +308,7 @@ export const sentiment = (db: Db, bill_id: string) =>
       {
         $match: {
           bill_ids: bill_id,
-          speech_seq: 0,
+          part_seq: 0,
         },
       },
       {
@@ -319,6 +318,7 @@ export const sentiment = (db: Db, bill_id: string) =>
           subdebate_1_seq: 1,
           subdebate_2_seq: 1,
           speech_seq: 1,
+          part_seq: 1,
         },
       },
       {
@@ -333,7 +333,7 @@ export const sentiment = (db: Db, bill_id: string) =>
         $lookup: {
           from: "speech_stats",
           localField: "speech_id",
-          foreignField: "id",
+          foreignField: "speech_id",
           as: "speech_stats",
         },
       },
@@ -378,7 +378,10 @@ export type BillOverview = {
   sentiment: SentimentRow[];
 };
 
-export async function billOverview(db: Db, bill_id: string): Promise<BillOverview> {
+export async function billOverview(
+  db: Db,
+  bill_id: string
+): Promise<BillOverview> {
   const [res] = await db
     .collection("parts")
     .aggregate<{
@@ -396,7 +399,7 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
       {
         $facet: {
           partyCounts: [
-            { $match: { speech_seq: 0 } },
+            { $match: { part_seq: 0 } },
             {
               $lookup: {
                 from: "talkers",
@@ -416,14 +419,12 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
             { $sort: { count: -1 } },
           ],
           topSpeakers: [
-            { $match: { speech_seq: 0 } },
+            { $match: { part_seq: 0 } },
             {
               $group: {
                 _id: "$talker_id",
                 speech_count: { $sum: 1 },
                 house: { $first: "$house" },
-                stance_value: { $first: "$stance_value" },
-                stance_thinking: { $first: "$stance_thinking" },
               },
             },
             {
@@ -443,14 +444,12 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
                 party: "$talker_info.party",
                 count: "$speech_count",
                 house: 1,
-                stance_value: 1,
-                stance_thinking: 1,
               },
             },
             { $sort: { count: -1, name: 1 } },
           ],
           overTime: [
-            { $match: { speech_seq: 0 } },
+            { $match: { part_seq: 0 } },
             {
               $group: {
                 _id: { date: "$date", house: "$house" },
@@ -465,11 +464,26 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
             },
             { $project: { _id: 0, date: "$_id", counts: 1 } },
             { $addFields: { countsObj: { $arrayToObject: "$counts" } } },
-            { $project: { date: 1, hor: "$countsObj.hor", senate: "$countsObj.senate" } },
+            {
+              $project: {
+                date: 1,
+                hor: "$countsObj.hor",
+                senate: "$countsObj.senate",
+              },
+            },
           ],
           speechList: [
-            { $match: { $or: [{ speech_seq: 0 }, { type: "first_reading" }] } },
-            { $sort: { date: 1, debate_seq: 1, subdebate_1_seq: 1, subdebate_2_seq: 1, speech_seq: 1 } },
+            { $match: { $or: [{ part_seq: 0 }, { type: "first_reading" }] } },
+            {
+              $sort: {
+                date: 1,
+                debate_seq: 1,
+                subdebate_1_seq: 1,
+                subdebate_2_seq: 1,
+                speech_seq: 1,
+                part_seq: 1,
+              },
+            },
             {
               $lookup: {
                 from: "talkers",
@@ -480,9 +494,18 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
             },
             {
               $addFields: {
-                talker_name: { $ifNull: [{ $arrayElemAt: ["$talker_info.name", 0] }, null] },
-                talker_party: { $ifNull: [{ $arrayElemAt: ["$talker_info.party", 0] }, null] },
-                talker_electorate: { $ifNull: [{ $arrayElemAt: ["$talker_info.electorate", 0] }, null] },
+                talker_name: {
+                  $ifNull: [{ $arrayElemAt: ["$talker_info.name", 0] }, null],
+                },
+                talker_party: {
+                  $ifNull: [{ $arrayElemAt: ["$talker_info.party", 0] }, null],
+                },
+                talker_electorate: {
+                  $ifNull: [
+                    { $arrayElemAt: ["$talker_info.electorate", 0] },
+                    null,
+                  ],
+                },
               },
             },
             { $project: { talker_info: 0 } },
@@ -490,8 +513,17 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
             { $sort: { _id: -1 } },
           ],
           sentiment: [
-            { $match: { speech_seq: 0 } },
-            { $sort: { date: 1, debate_seq: 1, subdebate_1_seq: 1, subdebate_2_seq: 1, speech_seq: 1 } },
+            { $match: { part_seq: 0 } },
+            {
+              $sort: {
+                date: 1,
+                debate_seq: 1,
+                subdebate_1_seq: 1,
+                subdebate_2_seq: 1,
+                speech_seq: 1,
+                part_seq: 1,
+              },
+            },
             {
               $lookup: {
                 from: "talkers",
@@ -505,7 +537,7 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
               $lookup: {
                 from: "speech_stats",
                 localField: "speech_id",
-                foreignField: "id",
+                foreignField: "speech_id",
                 as: "speech_stats",
               },
             },
@@ -533,20 +565,25 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
     const counts = res?.partyCounts ?? [];
     const total = counts.reduce((s, r) => s + r.count, 0);
     return counts.reduce((acc, r) => {
-      acc[r.party] = total ? parseFloat(((r.count / total) * 100).toFixed(2)) : 0;
+      acc[r.party] = total
+        ? parseFloat(((r.count / total) * 100).toFixed(2))
+        : 0;
       return acc;
     }, {} as PartySpeechProportionsResult);
   })();
 
   // Fill missing dates (last 18 days) for overTime
   const overTime = (res?.overTime ?? []).slice();
-  const existing = new Set(overTime.map((r) => r.date.toISOString().split("T")[0]));
+  const existing = new Set(
+    overTime.map((r) => r.date.toISOString().split("T")[0])
+  );
   const today = new Date();
   const acc = new Date();
   acc.setDate(today.getDate() - 18);
   while (acc <= today) {
     const ds = acc.toISOString().split("T")[0];
-    if (!existing.has(ds)) overTime.push({ date: new Date(ds), hor: 0, senate: 0 });
+    if (!existing.has(ds))
+      overTime.push({ date: new Date(ds), hor: 0, senate: 0 });
     acc.setDate(acc.getDate() + 1);
   }
   overTime.sort((a, b) => a.date.getTime() - b.date.getTime());
@@ -558,4 +595,50 @@ export async function billOverview(db: Db, bill_id: string): Promise<BillOvervie
     speechList: res?.speechList ?? [],
     sentiment: res?.sentiment ?? [],
   };
+}
+
+// Materialized summary (recommended when data changes infrequently)
+export type BillOverviewDoc = BillOverview & {
+  bill_id: string;
+  updatedAt: Date;
+  version?: number;
+};
+
+export async function upsertBillOverview(
+  db: Db,
+  bill_id: string
+): Promise<BillOverviewDoc> {
+  const data = await billOverview(db, bill_id);
+  const doc: BillOverviewDoc = {
+    bill_id,
+    updatedAt: new Date(),
+    ...data,
+  };
+  await db
+    .collection<BillOverviewDoc>("bill_overview")
+    .updateOne({ bill_id }, { $set: doc }, { upsert: true });
+  return doc;
+}
+
+export async function getBillOverviewDoc(
+  db: Db,
+  bill_id: string
+): Promise<BillOverviewDoc | null> {
+  return db.collection<BillOverviewDoc>("bill_overview").findOne({ bill_id });
+}
+
+// Fetch precomputed doc; rebuild if missing or older than maxAgeMs
+export async function getOrBuildBillOverview(
+  db: Db,
+  bill_id: string,
+  options: { maxAgeMs?: number } = {}
+): Promise<BillOverviewDoc> {
+  const { maxAgeMs } = options;
+  const doc = await getBillOverviewDoc(db, bill_id);
+  if (doc) {
+    if (!maxAgeMs) return doc;
+    const age = Date.now() - new Date(doc.updatedAt).getTime();
+    if (age <= maxAgeMs) return doc;
+  }
+  return upsertBillOverview(db, bill_id);
 }

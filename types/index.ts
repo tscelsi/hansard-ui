@@ -33,6 +33,7 @@ export type SpeechPartType = "interjection" | "continuation" | "speech";
 export type SpeechPart = {
   speech_id: string; // UUID as string
   speech_seq: number;
+  part_seq: number;
   talker_id: string;
   speech_content: string;
   speech_part_type: SpeechPartType;

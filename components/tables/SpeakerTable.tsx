@@ -46,22 +46,6 @@ const columns = [
     cell: (info) => info.getValue(),
     sortingFn: "alphanumeric",
   }),
-  columnHelper.accessor("stance_value", {
-    header: "Position",
-    cell: (info) => {
-      const val = info.getValue();
-      if (val === null || val === undefined) {
-        return "N/A";
-      } else if (val > 0.7) {
-        return "Supportive";
-      } else if (val < 0.3) {
-        return "Opposed";
-      } else {
-        return "Neutral";
-      }
-    },
-    sortingFn: "alphanumeric",
-  }),
 ];
 
 const LinkCell = ({

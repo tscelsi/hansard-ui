@@ -62,7 +62,11 @@ export default async function MemberPage({
     {
       $sort: {
         date: -1,
+        debate_seq: 1,
+        subdebate_1_seq: 1,
+        subdebate_2_seq: 1,
         speech_seq: 1,
+        part_seq: 1,
       },
     },
     {

@@ -43,7 +43,7 @@ const columns = [
   }),
   columnHelper.accessor("divisiveness", {
     header: "Divisiveness",
-    cell: (info) => info.getValue().toFixed(4),
+    cell: (info) => info.getValue()?.toFixed(4) || "N/A",
     sortingFn: "auto",
   }),
 ];

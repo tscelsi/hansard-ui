@@ -51,7 +51,7 @@ export const partySpeechProportions = async (
       {
         $match: {
           ...filter,
-          speech_seq: 0,
+          part_seq: 0,
         },
       },
       {
@@ -112,7 +112,7 @@ export const bill_discussion = (
     .aggregate<BillDiscussionType>([
       {
         $match: {
-          speech_seq: 0,
+          part_seq: 0,
           $and: [{ bill_ids: { $ne: null } }, { bill_ids: { $ne: "" } }],
         },
       },
@@ -183,7 +183,7 @@ export const speakers = (
     .aggregate<SpeakersResult>([
       {
         $match: {
-          speech_seq: 0,
+          part_seq: 0,
         },
       },
       {
@@ -245,7 +245,7 @@ export const divisiveness = (
     .aggregate<DivisivenessResult>([
       {
         $match: {
-          speech_seq: 0,
+          part_seq: 0,
           $and: [{ bill_ids: { $ne: null } }, { bill_ids: { $ne: "" } }],
         },
       },
@@ -312,7 +312,7 @@ export const bills_list = (
     .aggregate<BillsListResult>([
       {
         $match: {
-          speech_seq: 0,
+          part_seq: 0,
           $and: [{ bill_ids: { $ne: null } }, { bill_ids: { $ne: "" } }],
         },
       },

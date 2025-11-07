@@ -37,7 +37,7 @@ export default async function SpeechPage({
     },
     {
       $sort: {
-        speech_seq: 1,
+        part_seq: 1,
       },
     },
     {

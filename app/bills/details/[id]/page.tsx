@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
-import { billOverview } from "@/lib/queries";
+import { getOrBuildBillOverview } from "@/lib/queries";
 import { ChevronRight12Filled, Info16Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
@@ -41,13 +41,15 @@ export default async function BillPage({
   const sentimentGroupBy = castToSentimentGroupByValue(
     toStr(searchParams.sentimentGroupBy)
   );
+  // Use precomputed summary when available; rebuild if older than 24h
+  const summary = await getOrBuildBillOverview(db, billId, { maxAgeMs: 24 * 60 * 60 * 1000 });
   const {
     partySpeechProportions,
     speechesOverTime: speechesOverTimeResult,
     topSpeakers: topSpeakersResult,
     speechList: speechListResult,
     sentiment: sentimentResult,
-  } = await billOverview(db, billId);
+  } = summary;
 
   if (!speechListResult.length) {
     return (

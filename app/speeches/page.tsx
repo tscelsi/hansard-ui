@@ -77,7 +77,7 @@ export default async function SpeechesPage({
     {
       $match: {
         type: "speech",
-        speech_seq: 0,
+        part_seq: 0,
       },
     },
     {
@@ -110,6 +110,7 @@ export default async function SpeechesPage({
         subdebate_1_seq: 1,
         subdebate_2_seq: 1,
         speech_seq: 1,
+        part_seq: 1,
       },
     },
   ];
