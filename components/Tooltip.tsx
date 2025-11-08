@@ -12,7 +12,7 @@ export default ({
       <Tooltip.Trigger>{trigger}</Tooltip.Trigger>
       <Tooltip.Portal>
         <Tooltip.Content>
-          <div className="bg-light-bg shadow-md dark:bg-dark-bg border border-dark-grey text-sm rounded-md p-2 max-w-xs">
+          <div className="bg-light-bg shadow-md dark:bg-dark-bg border border-dark-grey text-sm rounded-md p-2 max-w-xs text-light-text dark:text-dark-text">
             {children}
           </div>
         </Tooltip.Content>
