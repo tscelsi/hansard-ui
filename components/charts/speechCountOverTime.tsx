@@ -121,7 +121,6 @@ export const PartySpeechProportionChart = ({
 }: {
   data: PartySpeechProportionsResult;
 }) => {
-  console.log(data);
   return (
     <div className="h-[20px] flex flex-row gap-0.5">
       {Object.entries(data).map(([party, proportion]) => (
