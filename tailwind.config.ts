@@ -18,6 +18,7 @@ export default {
         "light-grey": "#7D797F",
         "very-light-grey": "#CACACA",
         "link-blue": "#527AFF",
+        "gold": "#CED262",
         ALP: "#6C242A",
         LP: "#1E1B56",
         senate: "#9C351D",
