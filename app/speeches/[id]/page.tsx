@@ -156,7 +156,7 @@ export default async function SpeechPage({
         </div>
       </div>
       <div>
-        <div className="flex gap-1 p-2 border-b border-dark-grey">
+        <div className="flex gap-1 p-2 border-b border-dark-grey flex-wrap">
           <HouseBadge house={p0.house} />
           {p0?.stance && (
             <IconBadge
@@ -189,7 +189,7 @@ export default async function SpeechPage({
             ))}
         </div>
         {p0?.summary && (
-          <div className="border-b-2 border-dark-grey flex flex-col gap-2 p-2">
+          <div className="border-b border-dark-grey flex flex-col gap-2 p-2">
             <div className="flex items-center gap-2">
               <h2 className="text-3xl font-semibold">Summary</h2>
               <Tooltip
