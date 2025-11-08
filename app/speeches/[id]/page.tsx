@@ -158,7 +158,7 @@ export default async function SpeechPage({
       <div>
         <div className="flex gap-1 p-2 border-b border-dark-grey flex-wrap">
           <HouseBadge house={p0.house} />
-          {p0?.stance && (
+          {p0?.stance !== undefined && (
             <IconBadge
               icon={
                 <Tooltip
@@ -183,7 +183,7 @@ export default async function SpeechPage({
               {stanceToLabel(p0.stance)}
             </IconBadge>
           )}
-          {p0?.tone &&
+          {p0?.tone && p0.tone.length > 0 &&
             p0.tone.map((el) => (
               <Badge>{el.slice(0, 1).toUpperCase() + el.slice(1)}</Badge>
             ))}
