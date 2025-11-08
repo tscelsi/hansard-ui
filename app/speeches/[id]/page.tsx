@@ -155,7 +155,6 @@ export default async function SpeechPage({
           </span>
         </div>
       </div>
-      <div>
         <div className="flex gap-1 p-2 border-b border-dark-grey flex-wrap">
           <HouseBadge house={p0.house} />
           {p0?.stance !== undefined && (
@@ -255,7 +254,6 @@ export default async function SpeechPage({
             );
           })}
         </ol>
-      </div>
     </div>
   );
 }

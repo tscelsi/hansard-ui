@@ -39,7 +39,7 @@ export default function RootLayout({
             <footer
               className={clsx(
                 instrumentSans.className,
-                "m-auto border-x border-dark-grey container h-[48px] flex justify-between items-center px-4 text-sm"
+                "m-auto sm:border-x border-dark-grey container h-[48px] flex justify-between items-center px-4 text-sm"
               )}
             >
               <div className={clsx("dark:text-dark-grey text-light-grey")}>
