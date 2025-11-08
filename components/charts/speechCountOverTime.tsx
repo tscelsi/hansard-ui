@@ -3,7 +3,7 @@ import { formatDateForChart, formatDateString } from "@/lib/date";
 import {
   PartySpeechProportionsResult,
   SpeechesOverTimeResult,
-} from "@/lib/queries";
+} from "@/lib/bill_query_types";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
 import { useTheme } from "next-themes";
@@ -121,6 +121,7 @@ export const PartySpeechProportionChart = ({
 }: {
   data: PartySpeechProportionsResult;
 }) => {
+  console.log(data);
   return (
     <div className="h-[20px] flex flex-row gap-0.5">
       {Object.entries(data).map(([party, proportion]) => (

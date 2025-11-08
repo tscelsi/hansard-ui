@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
-import { getOrBuildBillOverview } from "@/lib/queries";
+import { BillOverviewDoc } from "@/lib/bill_query_types";
 import { ChevronRight12Filled, Info16Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
@@ -41,8 +41,20 @@ export default async function BillPage({
   const sentimentGroupBy = castToSentimentGroupByValue(
     toStr(searchParams.sentimentGroupBy)
   );
-  // Use precomputed summary when available; rebuild if older than 24h
-  const summary = await getOrBuildBillOverview(db, billId, { maxAgeMs: 24 * 60 * 60 * 1000 });
+  const summary = await db.collection<BillOverviewDoc>("bill_overview").findOne({ bill_id: billId });
+  if (!summary) {
+    return (
+      <div className="container">
+        <div className="card">
+          <Link href="/" className={clsx(instrumentSans.className, "text-link-blue text-sm hover:underline")}>Home</Link>
+          <h1 className="mt-2">Bill {billId}</h1>
+          <p className="text-gray-500 dark:text-gray-400">
+            No data found for this bill.
+          </p>
+        </div>
+      </div>
+    );
+  }
   const {
     partySpeechProportions,
     speechesOverTime: speechesOverTimeResult,
@@ -205,7 +217,7 @@ export default async function BillPage({
                     );
                   } else if (part.type === "first_reading") {
                     return (
-                      <div className="bg-link-blue/40 p-2 rounded-md">
+                      <div key={part.id} className="bg-link-blue/40 p-2 rounded-md">
                         <h2 className="flex justify-between items-baseline font-medium text-lg">
                           {part.subdebate_1_title}
                         </h2>

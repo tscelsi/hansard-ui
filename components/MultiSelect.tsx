@@ -4,6 +4,7 @@ import * as Popover from "@radix-ui/react-popover";
 import * as Checkbox from "@radix-ui/react-checkbox";
 import { useEffect, useMemo, useState } from "react";
 import Badge from "./Badge";
+import DismissableBadge from "./DismissableBadge";
 import { ChevronDown20Filled } from "@fluentui/react-icons";
 import clsx from "clsx";
 
@@ -76,12 +77,12 @@ export default function MultiSelect({
                 {selectedOptions.length > 0 && selectedOptions.length <= 5 && (
                   <>
                     {selectedOptions.map((opt) => (
-                      <Badge
+                      <DismissableBadge
                         key={opt.value}
                         onDismiss={() => toggle(opt.value)}
                       >
                         {opt.label}
-                      </Badge>
+                      </DismissableBadge>
                     ))}
                   </>
                 )}

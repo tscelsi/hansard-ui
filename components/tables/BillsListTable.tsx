@@ -1,6 +1,6 @@
 "use client";
 
-import { SpeakersResult } from "@/lib/queries";
+import { SpeakersResult } from "@/lib/bill_query_types";
 import Link from "next/link";
 import {
   createColumnHelper,

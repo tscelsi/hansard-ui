@@ -1,5 +1,5 @@
 import { Db } from "mongodb";
-import { SpeakersResult } from "./queries";
+import { SpeakersResult } from "./bill_query_types";
 
 export type BillDiscussionType = {
   bill_id: string;

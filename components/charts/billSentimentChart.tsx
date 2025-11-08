@@ -1,6 +1,6 @@
 "use client";
 
-import { SentimentResult } from "@/lib/queries";
+import { SentimentResult } from "@/lib/bill_query_types";
 import { getSpeechTonePositivity, Tone } from "@/lib/speech_tone";
 import { Location12Filled } from "@fluentui/react-icons";
 import { instrumentSans, lora } from "app/fonts";
