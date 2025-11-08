@@ -1,3 +1,5 @@
+import { Tone } from "@/lib/speech_tone";
+
 export type Talker = {
   id: string;
   name: string;
@@ -39,8 +41,17 @@ export type SpeechPart = {
   speech_part_type: SpeechPartType;
 } & Part;
 
-export type SpeechPartWithTalkerInfo = {
+export type SpeechPartWithTalkerInfo = TalkerInfo & SpeechPart;
+export type SpeechPartWithTalkerAndStats = SpeechStats & SpeechPartWithTalkerInfo;
+
+export type TalkerInfo = {
   talker_name: string;
   talker_electorate: string;
   talker_party: string;
-} & SpeechPart;
+}
+
+export type SpeechStats = {
+  summary?: string;
+  stance?: number;
+  tone?: Tone[];
+};

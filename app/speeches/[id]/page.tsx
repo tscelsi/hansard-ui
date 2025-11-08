@@ -1,6 +1,8 @@
 import { getDb } from "@/lib/mongodb";
-import type { SpeechPartWithTalkerInfo } from "@/types/index";
-import Badge from "components/Badge";
+import type {
+  SpeechPartWithTalkerAndStats,
+} from "@/types/index";
+import Badge, { HouseBadge } from "components/Badge";
 import clsx from "clsx";
 import { formatDate, formatDateString } from "@/lib/date";
 import {
@@ -33,7 +35,21 @@ export default async function SpeechPage({
       },
     },
     {
+      $lookup: {
+        from: "speech_stats",
+        localField: "speech_id",
+        foreignField: "speech_id",
+        as: "speech_stats",
+      },
+    },
+    {
       $unwind: "$talker_info",
+    },
+    {
+      $unwind: {
+        path: "$speech_stats",
+        preserveNullAndEmptyArrays: true,
+      },
     },
     {
       $sort: {
@@ -45,17 +61,22 @@ export default async function SpeechPage({
         talker_party: "$talker_info.party",
         talker_electorate: "$talker_info.electorate",
         talker_name: "$talker_info.name",
+        stance: "$speech_stats.stance",
+        summary: "$speech_stats.summary",
+        tone: "$speech_stats.tone",
       },
     },
     {
       $project: {
         talker_info: 0,
+        speech_stats: 0,
+        _id: 0,
       },
     },
   ];
   const parts = await db
     .collection("parts")
-    .aggregate<SpeechPartWithTalkerInfo>(pipeline)
+    .aggregate<SpeechPartWithTalkerAndStats>(pipeline)
     .toArray();
 
   if (!parts.length) {
@@ -69,7 +90,7 @@ export default async function SpeechPage({
   }
 
   const p0 = parts[0];
-  console.log(p0);
+
   const title = p0?.subdebate_1_title || "Speech";
   const subdebateTitle = p0?.subdebate_2_title || "";
 
@@ -126,6 +147,21 @@ export default async function SpeechPage({
         </div>
       </div>
       <div>
+        <div className="flex gap-1 p-2 border-b border-dark-grey">
+          <HouseBadge house={p0.house} />
+          {p0?.tone &&
+            p0.tone.map((el) => (
+              <Badge>{el.slice(0, 1).toUpperCase() + el.slice(1)}</Badge>
+            ))}
+        </div>
+        {p0?.summary && (
+          <div className="border-b-2 border-dark-grey p-2">
+            <h2 className="text-3xl font-semibold mb-2">Summary</h2>
+            <p className={clsx(instrumentSans.className, "text-md italic")}>
+              {p0.summary}
+            </p>
+          </div>
+        )}
         <ol>
           {parts.map((p) => {
             const who = p.talker_name || p.talker_id;
