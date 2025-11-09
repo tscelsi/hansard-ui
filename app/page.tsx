@@ -18,11 +18,11 @@ export default async function HomePage({}: {}) {
         </h2>
         <p className={clsx(
         instrumentSans.className, )}>
-          Parliament proceedings are made up primarily of speeches made by
-          members of parliament. They make speeches to debate and introduce bills,
+          Parliamentary proceedings are primarily debates and discussions in the form of a sequence of
+          speeches by members of parliament. They make speeches to debate and introduce bills,
           raise issues, and represent their constituents. Explore the speeches,
           the members who made them and explore how different bills are being discussed,
-          and the parties involved in passing them.
+          and the parties involved in championing them.
         </p>
         <div>
           <Link className="text-link-blue hover:underline" href="/members">
