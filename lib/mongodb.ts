@@ -1,24 +1,42 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, MongoClientOptions } from 'mongodb';
 
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/local';
-const db = process.env.MONGODB_DB || 'local';
-
-declare global {
-  // eslint-disable-next-line no-var
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
-}
+const db_name = process.env.MONGODB_DB || 'local';
+const options: MongoClientOptions = {
+  appName: "hansard-ui",
+};
 
 let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
+let clientPromise: Promise<MongoClient> | null = null;
 
-if (!global._mongoClientPromise) {
-  client = new MongoClient(uri);
-  global._mongoClientPromise = client.connect();
+
+if (uri) {
+  if (process.env.NODE_ENV === 'development') {
+    // In development mode, use a global variable so that the value
+    // is preserved across module reloads caused by HMR (Hot Module Replacement).
+    const globalWithMongo = global as typeof globalThis & {
+      _mongoClientPromise?: Promise<MongoClient>;
+    };
+
+    if (!globalWithMongo._mongoClientPromise) {
+      client = new MongoClient(uri, options);
+      globalWithMongo._mongoClientPromise = client.connect();
+    }
+    clientPromise = globalWithMongo._mongoClientPromise;
+  } else {
+    // In production mode, it's best to not use a global variable.
+    client = new MongoClient(uri, options);
+    clientPromise = client.connect();
+  }
 }
 
-clientPromise = global._mongoClientPromise!;
+export default clientPromise;
 
 export async function getDb(): Promise<Db> {
+  if (!clientPromise) {
+    throw new Error('Database client not initialized');
+  }
   const client = await clientPromise;
-  return client.db(db);
+  const db = client.db(db_name);
+  return db;
 }
