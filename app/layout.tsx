@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { ArrowUpRight12Filled } from "@fluentui/react-icons";
 
 export const metadata: Metadata = {
-  title: "Augov Hansard Tool",
+  title: "Hansard Insights",
   description: "Insights into Australian parliamentary speeches",
 };
 
