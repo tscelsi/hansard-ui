@@ -1,10 +1,10 @@
 import NavBar from "components/NavBar";
+import { Analytics } from '@vercel/analytics/next';
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import type { Metadata } from "next";
 import { instrumentSans, lora } from "./fonts";
 import clsx from "clsx";
-import Link from "next/link";
 import { ArrowUpRight12Filled } from "@fluentui/react-icons";
 
 export const metadata: Metadata = {
@@ -56,6 +56,7 @@ export default function RootLayout({
             </footer>
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
