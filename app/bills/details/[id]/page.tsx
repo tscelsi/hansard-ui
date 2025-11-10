@@ -20,6 +20,7 @@ import Menu from "components/Menu";
 import { SpeakerTable } from "components/tables/SpeakerTable";
 import Link from "next/link";
 import Tooltip from "components/Tooltip";
+import OutgoingLink from "components/OutgoingLink";
 
 const toStr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? v[0] ?? "" : v ?? "";
@@ -132,17 +133,12 @@ export default async function BillPage({
       </div>
       <div className="border-b border-dark-grey px-2 py-3 flex flex-col gap-2">
         <h1 className="text-4xl font-semibold">{b0.subdebate_1_title}</h1>
-        <a
-          target="_blank"
+        <OutgoingLink
+          className="text-sm"
           href={`https://www.aph.gov.au/Parliamentary_Business/Bills_Legislation/Bills_Search_Results/Result?bId=${b0.bill_ids?.[0]}`}
-          className={clsx(
-            "w-fit flex gap-1 items-center text-sm text-link-blue hover:underline hover:opacity-90 hover:cursor-pointer transition",
-            instrumentSans.className
-          )}
         >
-          <p>see bill on aph.gov.au</p>
-          <ArrowUpRight12Filled />
-        </a>
+          see bill on aph.gov.au
+        </OutgoingLink>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Party Speech Proportion</h2>

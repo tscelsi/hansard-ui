@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import Link from "next/link";
 import { instrumentSans } from "./fonts";
+import OutgoingLink from "components/OutgoingLink";
 
 export const runtime = "nodejs";
 
@@ -11,18 +12,25 @@ export default async function HomePage({}: {}) {
         "w-full h-full flex flex-col items-center justify-center"
       )}
     >
-      <div className={clsx(
-         "p-4 flex flex-col gap-4")}>
+      <div className={clsx("p-4 flex flex-col gap-4")}>
         <h2 className="text-2xl font-bold h-inherit">
           Uncover discussion in Australian parliament.
         </h2>
-        <p className={clsx(
-        instrumentSans.className, )}>
-          Parliamentary proceedings are primarily debates and discussions in the form of a sequence of
-          speeches by members of parliament. They make speeches to debate and introduce bills,
-          raise issues, and represent their constituents. Explore the speeches,
-          the members who made them and explore how different bills are being discussed,
-          and the parties involved in championing them.
+        <p className={clsx(instrumentSans.className)}>
+          Parliamentary proceedings are primarily debates and discussions in the
+          form of a sequence of speeches by members of parliament. They make
+          speeches to debate and introduce bills, raise issues, and represent
+          their constituents. Explore the speeches, the members who made them
+          and explore how different bills are being discussed, and the parties
+          involved in championing them.
+        </p>
+        <p>
+          The data used by this website is made available on the Parliament
+          website under a{" "}
+          <OutgoingLink href="https://creativecommons.org/licenses/by-nc-nd/4.0/">
+            CC-BY-NC-ND licence
+          </OutgoingLink>
+          .
         </p>
         <div>
           <Link className="text-link-blue hover:underline" href="/members">
@@ -31,7 +39,10 @@ export default async function HomePage({}: {}) {
           <Link className="text-link-blue hover:underline" href="/speeches">
             <h2>{">"} Speeches</h2>
           </Link>
-          <Link className="text-link-blue hover:underline" href="/bills/summary">
+          <Link
+            className="text-link-blue hover:underline"
+            href="/bills/summary"
+          >
             <h2>{">"} Bills</h2>
           </Link>
         </div>

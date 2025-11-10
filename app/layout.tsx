@@ -1,12 +1,13 @@
 import NavBar from "components/NavBar";
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import type { Metadata } from "next";
 import { instrumentSans, lora } from "./fonts";
 import clsx from "clsx";
 import { ArrowUpRight12Filled } from "@fluentui/react-icons";
+import OutgoingLink from "components/OutgoingLink";
 
 export const metadata: Metadata = {
   title: "Hansard Insights",
@@ -46,14 +47,9 @@ export default function RootLayout({
               <div className={clsx("dark:text-dark-grey text-light-grey")}>
                 made by tom.s © {new Date().getFullYear()}
               </div>
-              <a
-                href="https://my-blog-psi-opal.vercel.app/public/ddcfafb2-34a3-47a8-868b-f58e287ebd0a"
-                className="flex gap-1 items-center hover:underline hover:opacity-70 transition text-link-blue"
-                target="_blank"
-              >
+              <OutgoingLink href="https://my-blog-psi-opal.vercel.app/public/ddcfafb2-34a3-47a8-868b-f58e287ebd0a">
                 get in touch
-                <ArrowUpRight12Filled />
-              </a>
+              </OutgoingLink>
             </footer>
           </div>
         </ThemeProvider>
