@@ -13,21 +13,6 @@ const toArr = (v: string | string[] | undefined) =>
 const toStr = (v: string | string[] | undefined) =>
   Array.isArray(v) ? v[0] ?? "" : v ?? "";
 
-async function fetchFilters() {
-  const db = await getDb();
-  // Options for filters
-  const [parties, electorates] = await Promise.all([
-    db
-      .collection("talkers")
-      .distinct("party", { party: { $ne: null } }) as Promise<string[]>,
-    db
-      .collection("talkers")
-      .distinct("electorate", { electorate: { $ne: null } }) as Promise<
-      string[]
-    >,
-  ]);
-  return { parties, electorates };
-}
 
 type TalkerWithHouse = Talker & { house: "hor" | "senate" };
 
@@ -36,62 +21,111 @@ export default async function MembersListPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const { parties: partyOptions, electorates: electorateOptions } =
-    await fetchFilters();
+  const pageParam = Array.isArray(searchParams.page)
+    ? searchParams.page[0]
+    : searchParams.page;
+  const sizeParam = Array.isArray(searchParams.pageSize)
+    ? searchParams.pageSize[0]
+    : searchParams.pageSize;
+  const page = Math.max(1, Number(pageParam || "1"));
+  const pageSize = Math.max(1, Number(sizeParam || "20"));
   const partiesSel = toArr(searchParams.party);
   const electoratesSel = toArr(searchParams.electorate);
   const houseSel = toArr(searchParams.house);
   const query = toStr(searchParams.query);
-  const match: any = {};
-  if (partiesSel.length) match["talker_info.party"] = { $in: partiesSel };
-  if (electoratesSel.length)
-    match["talker_info.electorate"] = { $in: electoratesSel };
-  if (houseSel.length) match["house"] = { $in: houseSel };
+  // Build base match on talkers collection to avoid scanning all parts.
+  const talkerMatch: any = {};
+  if (partiesSel.length) talkerMatch.party = { $in: partiesSel };
+  if (electoratesSel.length) talkerMatch.electorate = { $in: electoratesSel };
+  if (query) talkerMatch.name = { $regex: query, $options: "i" };
   const db = await getDb();
+  // Switch to talkers-first pipeline: we only touch parts to verify membership
+  // and derive house, using $limit:1 to avoid scanning all speeches per person.
   const pipeline: any[] = [
+    { $match: talkerMatch },
     {
       $lookup: {
-        from: "talkers",
-        localField: "talker_id",
-        foreignField: "id",
-        as: "talker_info",
+        from: "parts",
+        let: { tid: "$id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$talker_id", "$$tid"] },
+                  { $eq: ["$type", "speech"] },
+                  { $eq: ["$part_seq", 0] },
+                  ...(houseSel.length ? [{ $in: ["$house", houseSel] }] : []),
+                ],
+              },
+            },
+          },
+          { $limit: 1 },
+        ],
+        as: "parts_hit",
       },
     },
-    { $unwind: "$talker_info" },
-    { $match: match },
-    {
-      $group: {
-        _id: "$talker_id",
-        party: { $first: "$talker_info.party" },
-        electorate: { $first: "$talker_info.electorate" },
-        name: { $first: "$talker_info.name" },
-        house: { $first: "$house" },
-      },
-    },
+    { $match: { parts_hit: { $ne: [] } } },
+    { $addFields: { house: { $first: "$parts_hit.house" } } },
     {
       $project: {
-        id: "$_id",
+        _id: 0,
+        id: 1,
+        name: 1,
         party: 1,
         electorate: 1,
-        name: 1,
         house: 1,
-        _id: 0,
       },
     },
     { $sort: { name: 1 } },
+    { $skip: (page - 1) * pageSize },
+    { $limit: pageSize },
   ];
+  // Options for filters
+  const [partyOptions, electorateOptions, members, totalAgg] = await Promise.all([
+    db
+      .collection("talkers")
+      .distinct("party", { party: { $ne: null } }) as Promise<string[]>,
+    db
+      .collection("talkers")
+      .distinct("electorate", { electorate: { $ne: null } }) as Promise<
+      string[]
+    >,
+    db.collection("talkers").aggregate<TalkerWithHouse>(pipeline).toArray(),
+    // total count for pagination
+    db
+      .collection("talkers")
+      .aggregate([
+        { $match: talkerMatch },
+        {
+          $lookup: {
+            from: "parts",
+            let: { tid: "$id" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ["$talker_id", "$$tid"] },
+                      { $eq: ["$type", "speech"] },
+                      { $eq: ["$part_seq", 0] },
+                      ...(houseSel.length ? [{ $in: ["$house", houseSel] }] : []),
+                    ],
+                  },
+                },
+              },
+              { $limit: 1 },
+            ],
+            as: "parts_hit",
+          },
+        },
+        { $match: { parts_hit: { $ne: [] } } },
+        { $count: "total" },
+      ])
+      .toArray(),
+  ]);
+  const total = totalAgg[0]?.total ?? 0;
 
-  const members = await db
-    .collection("parts")
-    .aggregate<TalkerWithHouse>(pipeline)
-    .toArray();
-
-  // filter member names by query
-  const filteredMembers = query
-    ? members.filter((m) =>
-        m.name?.toLowerCase().includes(query.toLowerCase())
-      )
-    : members;
 
   return (
     <div>
@@ -177,8 +211,8 @@ export default async function MembersListPage({
           </div>
         </form>
       </div>
-      {filteredMembers.length ? (
-        filteredMembers.map((m) => {
+      {members.length ? (
+        members.map((m) => {
           return (
             <Link
               key={m.id}
@@ -205,6 +239,70 @@ export default async function MembersListPage({
           No members found for current filters.
         </p>
       )}
+      {/* Pagination controls */}
+      <div className="flex items-center justify-between p-2 border-b border-dark-grey">
+        <div className={clsx(instrumentSans.className, "text-sm")}> 
+          Showing {(page - 1) * pageSize + 1}
+          {"-"}
+          {Math.min(page * pageSize, total)} of {total}
+        </div>
+        <div className="flex gap-2">
+          <PaginationLink
+            label="Previous"
+            page={page - 1}
+            disabled={page <= 1}
+            pageSize={pageSize}
+            searchParams={searchParams}
+          />
+          <PaginationLink
+            label="Next"
+            page={page + 1}
+            disabled={page * pageSize >= total}
+            pageSize={pageSize}
+            searchParams={searchParams}
+          />
+        </div>
+      </div>
     </div>
+  );
+}
+
+function PaginationLink({
+  label,
+  page,
+  pageSize,
+  searchParams,
+  disabled,
+}: {
+  label: string;
+  page: number;
+  pageSize: number;
+  searchParams: { [key: string]: string | string[] | undefined };
+  disabled?: boolean;
+}) {
+  const params = new URLSearchParams();
+  // preserve filters
+  const copy = (key: string) => {
+    const v = searchParams[key];
+    if (Array.isArray(v)) v.forEach((x) => x && params.append(key, x));
+    else if (v) params.set(key, v);
+  };
+  ["party", "electorate", "house", "query"].forEach(copy);
+  params.set("page", String(page));
+  params.set("pageSize", String(pageSize));
+  return (
+    <Link
+      aria-disabled={disabled}
+      href={disabled ? "#" : { pathname: "/members", query: Object.fromEntries(params as any) }}
+      className={clsx(
+        instrumentSans.className,
+        "px-3 py-1 rounded border text-sm",
+        disabled
+          ? "opacity-50 cursor-not-allowed border-dark-grey text-gray-500"
+          : "border-light-grey hover:bg-dark-bg hover:text-dark-text dark:hover:bg-light-bg dark:hover:text-light-text"
+      )}
+    >
+      {label}
+    </Link>
   );
 }

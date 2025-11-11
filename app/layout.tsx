@@ -6,13 +6,13 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { instrumentSans, lora } from "./fonts";
 import clsx from "clsx";
-import { ArrowUpRight12Filled } from "@fluentui/react-icons";
 import OutgoingLink from "components/OutgoingLink";
 
 export const metadata: Metadata = {
   title: "Hansard Insights",
   description: "Insights into Australian parliamentary speeches",
 };
+
 
 export default function RootLayout({
   children,

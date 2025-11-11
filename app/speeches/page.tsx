@@ -1,46 +1,18 @@
 import { getDb } from "@/lib/mongodb";
+import { toArr, toStr } from "@/lib/params";
 import { SpeechPartWithTalkerInfo } from "@/types/index";
 import { instrumentSans } from "app/fonts";
+import { fetchFilters } from "app/lib/data";
 import clsx from "clsx";
 import MultiSelect from "components/MultiSelect";
 import { SpeechesTable } from "components/tables/SpeechesTable";
 import Link from "next/link";
-
-const toArr = (v: string | string[] | undefined) =>
-  Array.isArray(v) ? (v.filter(Boolean) as string[]) : v ? [v] : [];
-
-const toStr = (v: string | string[] | undefined) =>
-  Array.isArray(v) ? v[0] ?? "" : v ?? "";
-
-async function fetchFilters() {
-  const db = await getDb();
-  // Options for filters
-  const [categories, parties, electorates] = await Promise.all([
-    db.collection("parts").distinct("debate_category", {
-      debate_category: { $ne: null },
-    }) as Promise<string[]>,
-    db
-      .collection("talkers")
-      .distinct("party", { party: { $ne: null } }) as Promise<string[]>,
-    db
-      .collection("talkers")
-      .distinct("electorate", { electorate: { $ne: null } }) as Promise<
-      string[]
-    >,
-  ]);
-  return { categories, parties, electorates };
-}
 
 export default async function SpeechesPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const {
-    parties: partyOptions,
-    categories: categoryOptions,
-    electorates: electorateOptions,
-  } = await fetchFilters();
   const pageParam = Array.isArray(searchParams.page)
     ? searchParams.page[0]
     : searchParams.page;
@@ -57,10 +29,12 @@ export default async function SpeechesPage({
   const house = toArr(searchParams.house);
   const query = toStr(searchParams.query);
   const match: any = {};
+  // We'll split the filters into those needing talker lookup (party/electorate)
+  // and those that don't (category, house, date range, query). This lets us
+  // paginate early (before expensive $lookup) when we don't need talker-based
+  // filtering.
+  const needTalkerFilter = partiesSel.length > 0 || electoratesSel.length > 0;
   if (categoriesSel.length) match.debate_category = { $in: categoriesSel };
-  if (partiesSel.length) match["talker_info.party"] = { $in: partiesSel };
-  if (electoratesSel.length)
-    match["talker_info.electorate"] = { $in: electoratesSel };
   if (house.length) match.house = { $in: house };
   const range: any = {};
   if (from) {
@@ -73,82 +47,145 @@ export default async function SpeechesPage({
   }
   if (Object.keys(range).length) match.date = range;
   const db = await getDb();
-  let pipeline: any[] = [
-    {
-      $match: {
-        type: "speech",
-        part_seq: 0,
-      },
-    },
-    {
-      $lookup: {
-        from: "talkers",
-        localField: "talker_id",
-        foreignField: "id",
-        as: "talker_info",
-      },
-    },
-    { $unwind: "$talker_info" },
-    { $match: match },
-    {
-      $addFields: {
-        talker_name: "$talker_info.name",
-        talker_party: "$talker_info.party",
-        talker_electorate: "$talker_info.electorate",
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        talker_info: 0,
-      },
-    },
-    {
-      $sort: {
-        date: -1,
-        debate_seq: 1,
-        subdebate_1_seq: 1,
-        subdebate_2_seq: 1,
-        speech_seq: 1,
-        part_seq: 1,
-      },
-    },
-  ];
 
-  if (query && query !== "") {
-    // place at the front of the pipeline
-    pipeline.splice(0, 0, {
-      $search: {
-        index: "search_index",
-        text: {
-          query: query,
-          path: "speech_content",
-          matchCriteria: "all",
+  // Build base match (fields existing on parts collection).
+  const baseMatch: any = {
+    type: "speech",
+    part_seq: 0,
+  };
+  if (match.debate_category) baseMatch.debate_category = match.debate_category;
+  if (match.house) baseMatch.house = match.house;
+  if (range && Object.keys(range).length) baseMatch.date = range;
+
+  // Talker-based match is separated so we can optionally defer lookup.
+  const talkerMatch: any = {};
+  if (partiesSel.length) talkerMatch["talker_info.party"] = { $in: partiesSel };
+  if (electoratesSel.length)
+    talkerMatch["talker_info.electorate"] = { $in: electoratesSel };
+
+  const searchStage =
+    query && query !== ""
+      ? {
+          $search: {
+            index: "search_index",
+            text: {
+              query: query,
+              path: "speech_content",
+              matchCriteria: "all",
+            },
+          },
+        }
+      : null;
+
+  const sortStage = {
+    $sort: {
+      date: -1,
+      debate_seq: 1,
+      subdebate_1_seq: 1,
+      subdebate_2_seq: 1,
+      speech_seq: 1,
+      part_seq: 1,
+    },
+  };
+
+  const addTalkerFieldsStage = {
+    $addFields: {
+      talker_name: "$talker_info.name",
+      talker_party: "$talker_info.party",
+      talker_electorate: "$talker_info.electorate",
+    },
+  };
+
+  const projectStage = {
+    $project: {
+      _id: 0,
+      talker_info: 0,
+    },
+  };
+
+  // Pipeline variants:
+  // 1. If we need talker filter: lookup early so we can filter, then sort and paginate.
+  // 2. Otherwise: sort & paginate FIRST, then lookup just for enrichment (reduces lookup volume).
+  let dataPipeline: any[];
+  let countPipeline: any[];
+
+  if (needTalkerFilter) {
+    dataPipeline = [
+      ...(searchStage ? [searchStage] : []),
+      { $match: baseMatch },
+      {
+        $lookup: {
+          from: "talkers",
+          localField: "talker_id",
+          foreignField: "id",
+          as: "talker_info",
         },
       },
-    });
+      { $unwind: "$talker_info" },
+      ...(Object.keys(talkerMatch).length ? [{ $match: talkerMatch }] : []),
+      sortStage,
+      { $skip: (page - 1) * pageSize },
+      { $limit: pageSize },
+      addTalkerFieldsStage,
+      projectStage,
+    ];
+    countPipeline = [
+      ...(searchStage ? [searchStage] : []),
+      { $match: baseMatch },
+      {
+        $lookup: {
+          from: "talkers",
+          localField: "talker_id",
+          foreignField: "id",
+          as: "talker_info",
+        },
+      },
+      { $unwind: "$talker_info" },
+      ...(Object.keys(talkerMatch).length ? [{ $match: talkerMatch }] : []),
+      { $count: "total" },
+    ];
+  } else {
+    dataPipeline = [
+      ...(searchStage ? [searchStage] : []),
+      { $match: baseMatch },
+      sortStage,
+      { $skip: (page - 1) * pageSize },
+      { $limit: pageSize },
+      // Enrich AFTER pagination
+      {
+        $lookup: {
+          from: "talkers",
+          localField: "talker_id",
+          foreignField: "id",
+          as: "talker_info",
+        },
+      },
+      { $unwind: "$talker_info" },
+      addTalkerFieldsStage,
+      projectStage,
+    ];
+    countPipeline = [
+      ...(searchStage ? [searchStage] : []),
+      { $match: baseMatch },
+      { $count: "total" },
+    ];
   }
 
-  const dataPipeline = [
-    ...pipeline,
-    { $skip: (page - 1) * pageSize },
-    { $limit: pageSize },
-  ];
-
-  const [summaries, totalAgg] = await Promise.all([
+  const [
+    {
+      parties: partyOptions,
+      categories: categoryOptions,
+      electorates: electorateOptions,
+    },
+    speeches,
+    totalAgg,
+  ] = await Promise.all([
+    fetchFilters(),
     db
       .collection("parts")
       .aggregate<SpeechPartWithTalkerInfo>(dataPipeline)
       .toArray(),
-    db
-      .collection("parts")
-      .aggregate([
-        ...pipeline.filter(
-          (stage) => !("$sort" in stage) && !("$project" in stage)
-        ),
-        { $count: "total" },
-      ])
-      .toArray(),
+    db.collection("parts").aggregate(countPipeline).toArray(),
   ]);
   const total = totalAgg[0]?.total ?? 0;
 
@@ -278,18 +315,18 @@ export default async function SpeechesPage({
         </form>
       </div>
       <div className="border-b border-dark-grey">
-      {summaries.length > 0 ? (
-        <SpeechesTable
-          data={summaries}
-          total={total}
-          page={page}
-          pageSize={pageSize}
-        />
-      ) : (
-        <p className="text-gray-500 dark:text-gray-400">
-          No speeches found for current filters.
-        </p>
-      )}
+        {speeches.length > 0 ? (
+          <SpeechesTable
+            data={speeches}
+            total={total}
+            page={page}
+            pageSize={pageSize}
+          />
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">
+            No speeches found for current filters.
+          </p>
+        )}
       </div>
     </div>
   );
