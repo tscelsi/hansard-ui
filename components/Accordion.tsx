@@ -31,6 +31,7 @@ export const Accordion = (props: AccordionProps) => {
       type={type}
       defaultValue={defaultValue}
       className={clsx("w-full", className)}
+      collapsible
     >
   {items.map((item: AccordionItem) => (
         <RadixAccordion.Item

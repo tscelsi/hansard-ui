@@ -9,14 +9,18 @@ export type BillDiscussionType = {
   latest_speech_date: Date;
 };
 
+const createTalkerFilter = (parties: string[]) => {
+  let filter: any = {};
+  if (parties.length) filter["talker_info.party"] = { $in: parties };
+  return filter;
+}
+
 const createFilter = (
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
   let filter: any = {};
-  if (parties.length) filter["talker_info.party"] = { $in: parties };
   if (house.length) filter.house = { $in: house };
   const range: any = {};
   if (from) {
@@ -39,12 +43,11 @@ export type PartySpeechCountsResult = {
 
 export const partySpeechProportions = async (
   db: Db,
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
-  const filter = createFilter(parties, house, from, to);
+  const filter = createFilter(house, from, to);
   const result = await db
     .collection("parts")
     .aggregate<PartySpeechCountsResult>([
@@ -100,12 +103,11 @@ export const partySpeechProportions = async (
 
 export const bill_discussion = (
   db: Db,
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
-  const filter = createFilter(parties, house, from, to);
+  const filter = createFilter(house, from, to);
 
   return db
     .collection("parts")
@@ -114,6 +116,7 @@ export const bill_discussion = (
         $match: {
           part_seq: 0,
           $and: [{ bill_ids: { $ne: null } }, { bill_ids: { $ne: "" } }],
+          ...filter,
         },
       },
       {
@@ -126,7 +129,6 @@ export const bill_discussion = (
       },
       { $unwind: "$talker_info" },
       { $unwind: "$bill_ids" },
-      { $match: filter },
       {
         $addFields: {
           title_len: { $strLenCP: "$subdebate_1_title" },
@@ -172,18 +174,18 @@ export const bill_discussion = (
 
 export const speakers = (
   db: Db,
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
-  const filter = createFilter(parties, house, from, to);
+  const filter = createFilter(house, from, to);
   return db
     .collection("parts")
     .aggregate<SpeakersResult>([
       {
         $match: {
           part_seq: 0,
+          ...filter,
         },
       },
       {
@@ -193,6 +195,7 @@ export const speakers = (
             $sum: 1,
           },
           house: { $first: "$house" },
+          date: { $last: "$date" },
         },
       },
       {
@@ -234,12 +237,10 @@ export type DivisivenessResult = {
 
 export const divisiveness = (
   db: Db,
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
-  const filter = createFilter(parties, house, from, to);
   return db
     .collection("parts")
     .aggregate<DivisivenessResult>([
@@ -301,12 +302,11 @@ export type BillsListResult = {
 
 export const bills_list = (
   db: Db,
-  parties: string[],
   house: string[],
   from: string,
   to: string
 ) => {
-  const filter = createFilter(parties, house, from, to);
+  const filter = createFilter(house, from, to);
   return db
     .collection("parts")
     .aggregate<BillsListResult>([
@@ -314,6 +314,7 @@ export const bills_list = (
         $match: {
           part_seq: 0,
           $and: [{ bill_ids: { $ne: null } }, { bill_ids: { $ne: "" } }],
+          ...filter,
         },
       },
       {
@@ -331,7 +332,6 @@ export const bills_list = (
       },
       { $unwind: "$talker_info" },
       { $unwind: "$bill_ids" },
-      { $match: filter },
       {
         $group: {
           _id: "$bill_ids",

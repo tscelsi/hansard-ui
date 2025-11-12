@@ -5,7 +5,9 @@ import {
   partySpeechProportions,
   speakers,
 } from "@/lib/bills_queries";
+import { formatDate, formatDateString } from "@/lib/date";
 import { getDb } from "@/lib/mongodb";
+import { toStr } from "@/lib/params";
 import { Info16Regular } from "@fluentui/react-icons";
 import { instrumentSans } from "app/fonts";
 import clsx from "clsx";
@@ -14,7 +16,7 @@ import { PartySpeechProportionChart } from "components/charts/speechCountOverTim
 import { BillsListTable } from "components/tables/BillsListTable";
 import { DivisivenessTable } from "components/tables/DivisivenessTable";
 import { SpeakerTable } from "components/tables/SpeakerTable";
-import Tooltip from "components/Tooltip";
+import Link from "next/link";
 
 // Quick and simple Bill type
 interface Bill {
@@ -23,20 +25,24 @@ interface Bill {
   title: string;
 }
 
-export default async function BillsPage() {
+export default async function BillsPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const db = await getDb();
+  const from = toStr(searchParams.from);
+  const to = toStr(searchParams.to);
   const [
     billsDiscussionResult,
     speakersResult,
-    divisivenessResult,
     partySpeechProportionsResult,
     billsListResult,
   ] = await Promise.all([
-    bill_discussion(db, [], [], "", ""),
-    speakers(db, [], [], "", ""),
-    divisiveness(db, [], [], "", ""),
-    partySpeechProportions(db, [], [], "", ""),
-    bills_list(db, [], [], "", ""),
+    bill_discussion(db, [], from, to),
+    speakers(db, [], from, to),
+    partySpeechProportions(db, [], from, to),
+    bills_list(db, [], from, to),
   ]);
 
   let largestProportionParty = Object.keys(partySpeechProportionsResult)[0];
@@ -64,6 +70,60 @@ export default async function BillsPage() {
           An overview of discussion in parliament relating to bills.
         </h2>
       </div>
+      <div className="flex sticky top-0 bg-light-bg dark:bg-dark-bg z-10 flex-wrap">
+        <form method="get" className="flex flex-1 flex-wrap items-stretch">
+          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px] flex-1">
+            <label htmlFor="from" className="block text-xs font-bold">
+              Earliest
+            </label>
+            <input
+              id="from"
+              name="from"
+              type="date"
+              defaultValue={from}
+              className={clsx(
+                instrumentSans.className,
+                "bg-light-bg dark:bg-dark-bg text-sm"
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-2 p-2 border-b border-r border-dark-grey min-h-[64px] flex-1">
+            <label htmlFor="to" className="block text-xs font-bold">
+              Latest
+            </label>
+            <input
+              id="to"
+              name="to"
+              type="date"
+              defaultValue={to}
+              className={clsx(
+                instrumentSans.className,
+                "bg-light-bg dark:bg-dark-bg text-sm"
+              )}
+            />
+          </div>
+          <div className="border-b border-dark-grey h-[64px] flex-1 flex items-center p-2 gap-2 border-r">
+            <button
+              type="submit"
+              className={clsx(
+                instrumentSans.className,
+                "p-2 bg-dark-bg text-dark-text dark:bg-light-bg dark:text-light-text rounded border border-light-grey text-sm"
+              )}
+            >
+              Apply
+            </button>
+            <Link
+              href="/bills/summary"
+              className={clsx(
+                instrumentSans.className,
+                "p-2 text-light-text dark:text-dark-text text-center rounded border border-dark-grey text-sm"
+              )}
+            >
+              Clear
+            </Link>
+          </div>
+        </form>
+      </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Party Speech Proportion</h2>
         <PartySpeechProportionChart data={partySpeechProportionsResult} />
@@ -72,7 +132,8 @@ export default async function BillsPage() {
         >
           {largestProportionParty} has largest proportion of speeches with{" "}
           {largestProportion}%. {secondLargestParty} is second with{" "}
-          {secondLargestProportion}%.
+          {secondLargestProportion}%. Stats calculated from {formatDateString(from)}
+          {" "}to {formatDateString(to)}.
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
@@ -83,10 +144,14 @@ export default async function BillsPage() {
         <h2 className="text-2xl font-semibold">Speakers</h2>
         <SpeakerTable data={speakersResult} />
       </div>
-      <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
+      {/* <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <div className="flex items-center gap-1">
           <h2 className="text-2xl font-semibold">Divisiveness</h2>
-          <Tooltip trigger={<Info16Regular className="text-light-text dark:text-light-grey" />}>
+          <Tooltip
+            trigger={
+              <Info16Regular className="text-light-text dark:text-light-grey" />
+            }
+          >
             <p className={clsx(instrumentSans.className)}>
               Calculated based on an analysis of a speaker's sentiment and how
               often interjections occur in their speeches,{" "}
@@ -99,7 +164,7 @@ export default async function BillsPage() {
           </Tooltip>
         </div>
         <DivisivenessTable data={divisivenessResult} />
-      </div>
+      </div> */}
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">
         <h2 className="text-2xl font-semibold">Bills List</h2>
         <BillsListTable data={billsListResult} />
