@@ -108,8 +108,8 @@ export const SpeechCountOverTimeByPartChart = ({
               );
             }}
           />
-          <Bar stackId="a" dataKey="hor" fill="#4E8A76" />
-          <Bar stackId="a" dataKey="senate" fill="#9C351D" />
+          <Bar stackId="a" dataKey="hor" fill="#4E8A76" radius={[16, 16, 0, 0]}/>
+          <Bar stackId="a" dataKey="senate" fill="#9C351D" radius={[16, 16, 0, 0]}/>
         </BarChart>
       </ResponsiveContainer>
     </div>

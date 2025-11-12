@@ -1,4 +1,5 @@
-import { MongoClient, Db, MongoClientOptions } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
+import { attachDatabasePool } from "@vercel/functions";
 
 const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/local';
 const db_name = process.env.MONGODB_DB || 'local';
@@ -23,6 +24,7 @@ if (uri) {
   } else {
     // In production mode, it's best to not use a global variable.
     client = new MongoClient(uri);
+    attachDatabasePool(client);
     clientPromise = client.connect();
   }
 }
