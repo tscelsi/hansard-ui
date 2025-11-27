@@ -17,7 +17,6 @@ export type Part = {
   house: "hor" | "senate";
   bill_ids?: string[] | null;
   chamber: ChamberType;
-  type: "speech" | "first_reading";
   debate_category: string;
   debate_seq: number;
   subdebate_1_title: string;
@@ -38,8 +37,20 @@ export type SpeechPart = {
   part_seq: number;
   talker_id: string;
   speech_content: string;
+  type: "speech";
   speech_part_type: SpeechPartType;
 } & Part;
+
+export type Division = {
+  type: "division";
+  result: string;
+} & Part;
+
+export type FirstReading = {
+  type: "first_reading";
+} & Part;
+
+export type AnyPart = SpeechPartWithTalkerInfo | Division | FirstReading;
 
 export type SpeechPartWithTalkerInfo = TalkerInfo & SpeechPart;
 export type SpeechPartWithTalkerAndStats = SpeechStats & SpeechPartWithTalkerInfo;

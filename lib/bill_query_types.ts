@@ -1,4 +1,4 @@
-import { SpeechPartWithTalkerInfo } from "../types";
+import { AnyPart, SpeechPartWithTalkerInfo } from "../types";
 import { Tone } from "./speech_tone";
 
 export type PartySpeechCountsResult = {
@@ -37,7 +37,7 @@ export type SentimentResult = {
 
 type OverTimeRow = { date: Date; hor?: number; senate?: number };
 type TopSpeakerRow = SpeakersResult;
-type SpeechListRow = { _id: Date; parts: SpeechPartWithTalkerInfo[] };
+type SpeechListRow = { _id: Date; parts: AnyPart[] };
 type SentimentRow = SentimentResult;
 
 export type BillOverview = {
