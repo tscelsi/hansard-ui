@@ -252,6 +252,22 @@ export default async function BillPage({
                         </div>
                       </div>
                     );
+                  } else if (part.type === "division") {
+                    return (
+                      <div
+                        key={part.id}
+                        className="bg-link-blue/40 p-2 rounded-md"
+                      >
+                        <h2 className="flex justify-between items-baseline font-medium text-lg">
+                          The House Divided
+                        </h2>
+                        <div className="flex flex-wrap gap-1">
+                          <Badge>Division</Badge>
+                          <HouseBadge house={part.house} />
+                        </div>
+                        <div>{part.result}</div>
+                      </div>
+                    );
                   }
                 })}
               </div>

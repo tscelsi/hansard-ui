@@ -132,8 +132,7 @@ export default async function BillsPage({
         >
           {largestProportionParty} has largest proportion of speeches with{" "}
           {largestProportion}%. {secondLargestParty} is second with{" "}
-          {secondLargestProportion}%. Stats calculated from {formatDateString(from)}
-          {" "}to {formatDateString(to)}.
+          {secondLargestProportion}%.
         </p>
       </div>
       <div className="flex flex-col gap-2 px-2 py-3 border-b border-dark-grey">

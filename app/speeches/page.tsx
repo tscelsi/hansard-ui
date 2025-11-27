@@ -205,7 +205,7 @@ export default async function SpeechesPage({
           results.
         </h2>
       </div>
-      <div className="flex">
+      <div className="flex sm:sticky top-0 bg-light-bg dark:bg-dark-bg z-10 flex-wrap">
         <form method="get" className="flex flex-1 flex-wrap items-stretch">
           <div className="flex flex-col gap-2 border-b border-r border-dark-grey min-h-[64px] flex-1 sm:flex-2">
             <input
